@@ -65,7 +65,7 @@
     }
 
    },
-  
+
   object_definitions: {
     event: {
       fields: lambda do
@@ -78,7 +78,7 @@
           { name: "summary" },
           { name: "description" },
           { name: "location" },
-          { 
+          {
             name: "creator", type: "object", properties: [
               { name: "id" },
               { name: "email" },
@@ -86,7 +86,7 @@
               { name: "self", type: "boolean" }
             ]
           },
-          { 
+          {
             name: "organizer", type: "object", properties: [
               { name: "id" },
               { name: "email" },
@@ -94,12 +94,12 @@
               { name: "self", type: "boolean" }
             ]
           },
-          { 
+          {
             name: "start", type: "object", properties: [
               { name: "dateTime", type: "date_time", control_type: "date_time" }
             ]
           },
-          { 
+          {
             name: "end", type: "object", properties: [
               { name: "dateTime", type: "date_time", control_type: "date_time" }
             ]
@@ -107,12 +107,12 @@
           { name: "endTimeUnspecified", type: "boolean" },
           { name: "recurrence", type: "array", properties: [] },
           { name: "recurringEventId" },
-          { 
+          {
             name: "originalStartTime", type: "object", properties: [
               { name: "dateTime", type: "date_time", control_type: "date_time" }
             ]
           },
-          { 
+          {
             name: "attendees", type: "array", of: "object", properties: [
               { name: "id" },
               { name: "email" },
@@ -123,7 +123,7 @@
               { name: "optional", type: "boolean" },
               { name: "responseStatus" },
               { name: "comment" },
-              { name: "additionalGuests", type: "integer" }              
+              { name: "additionalGuests", type: "integer" }
             ]
           },
         ]
@@ -175,7 +175,7 @@
       end,
 
       poll: lambda do |connection, input, next_page|
-        input["timeMin"] = (input["timeMin"] || Time.now).utc.strftime('%FT%TZ')
+        input["timeMin"] = (input["timeMin"] || Time.now).utc.strftime("%FT%TZ")
 
         page = next_page || nil
 
@@ -194,10 +194,10 @@
         events = []
 
         response["items"].each do |event|
-          if event["end"].present? && 
-             event["end"]["dateTime"].present? && 
+          if event["end"].present? &&
+             event["end"]["dateTime"].present? &&
              event["end"]["dateTime"].to_time <= Time.now
-               events << event
+             events << event
           end
         end
         {
@@ -218,7 +218,7 @@
 
     cancelled_event: {
       help: "Checks for updates every 5 minutes.",
-      description: "Cancelled <span class=\"provider\">event</span> in 
+      description: "Cancelled <span class=\"provider\">event</span> in
                     <span class=\"provider\">Google Calendar</span>",
       input_fields: lambda do
         [
@@ -253,9 +253,9 @@
         ]
       end,
 
-      poll: lambda do |connection, input, next_page|
+      poll: lambda do |_connection, input, next_page|
         input["updatedMin"] = (input["updatedMin"] ||
-        Time.now).utc.strftime('%FT%TZ')
+        Time.now).utc.strftime("%FT%TZ")
 
         page = next_page || nil
 
@@ -266,11 +266,11 @@
         else
           response = get("https://www.googleapis.com/calendar/v3/calendars/" \
                          "#{input['calendarId']}/events?showDeleted=true" \
-                         "&orderBy=updated&timeMin=#{input["updatedMin"]}")
+                         "&orderBy=updated&timeMin=#{input['updatedMin']}")
         end
-        
+
         events = response["items"].
-          select{ |event| event["status"] == "cancelled" }
+                 select { |event| event["status"] == "cancelled" }
         {
           events: events,
           next_page: response["nextPageToken"] || nil,
@@ -289,10 +289,10 @@
   },
 
   pick_lists: {
-    calendars: lambda do |connection|
+    calendars: lambda do |_connection|
       get("https://www.googleapis.com/calendar/v3
         /users/me/calendarList")["items"].
-        map{ |calendar| [calendar["summary"], calendar["id"]] }
+        map { |calendar| [calendar["summary"], calendar["id"]] }
     end
   }
 }
