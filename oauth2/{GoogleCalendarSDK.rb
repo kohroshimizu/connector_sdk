@@ -174,7 +174,7 @@
         ]
       end,
 
-      poll: lambda do |connection, input, next_page|
+      poll: lambda do |_connection, input, next_page|
         input["timeMin"] = (input["timeMin"] || Time.now).utc.strftime("%FT%TZ")
 
         page = next_page || nil
