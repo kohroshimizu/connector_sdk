@@ -44,25 +44,25 @@
                     request_format_www_form_urlencoded
 
         [response, nil, nil]
-      end,
+       end,
 
-      refresh: lambda do |connection, refresh_token|
-        post("https://accounts.google.com/o/oauth2/token").
-          payload(client_id: connection["client_id"],
-                  client_secret: connection["client_secret"],
-                  grant_type: "refresh_token",
-                  refresh_token: refresh_token).
-          request_format_www_form_urlencoded
-      end,
+       refresh: lambda do |connection, refresh_token|
+         post("https://accounts.google.com/o/oauth2/token").
+           payload(client_id: connection["client_id"],
+                   client_secret: connection["client_secret"],
+                   grant_type: "refresh_token",
+                   refresh_token: refresh_token).
+           request_format_www_form_urlencoded
+       end,
 
-      refresh_on: [401],
+       refresh_on: [401],
 
-      detect_on: [/"errors"\:\s*\[/],
+       detect_on: [/"errors"\:\s*\[/],
 
-      apply: lambda do |_connection, access_token|
-        headers("Authorization" => "Bearer #{access_token}")
-      end,
-    }
+       apply: lambda do |_connection, access_token|
+         headers("Authorization" => "Bearer #{access_token}")
+       end,
+     }
 
    },
 
@@ -125,13 +125,13 @@
               { name: "comment" },
               { name: "additionalGuests", type: "integer" }
             ]
-          },
+          }
         ]
       end
     }
   },
 
-  test: lambda do |connection|
+  test: lambda do |_connection|
     get("https://www.googleapis.com/calendar/v3/users/me/settings?maxResults=1")
   end,
 
@@ -197,7 +197,7 @@
           if event["end"].present? &&
              event["end"]["dateTime"].present? &&
              event["end"]["dateTime"].to_time <= Time.now
-             events << event
+            events << event
           end
         end
         {
