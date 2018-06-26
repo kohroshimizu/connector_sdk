@@ -1,6 +1,6 @@
 {
   title: "Caspio",
-  
+
   secure_tunnel: true,
 
   connection: {
@@ -23,7 +23,7 @@
         name: "client_secret",
         label: "Client Secret",
         control_type: "password",
-        optional: false, 
+        optional: false,
         hint: "Your client secret can be found from Account
                -> Access Permissions -> New Profile (if not already created)"
       }
@@ -34,7 +34,7 @@
 
       acquire: lambda do |connection|
         {
-          auth_token: 
+          auth_token:
           post("https://#{connection['subdomain']}.caspio.com/oauth/token").
           payload(client_id: connection["client_id"],
                   client_secret: connection["client_secret"],
@@ -67,7 +67,7 @@
         table = "#{config['table_name']}"
         columns = get("/rest/v1/tables/#{config['table_name']}/columns").
         dig("Result")&.
-        reject{ |col| ["RANDOM ID", "AUTONUMBER", "PREFIXED AUTONUMBER", 
+        reject{ |col| ["RANDOM ID", "AUTONUMBER", "PREFIXED AUTONUMBER",
                        "GUID", "TIMESTAMP"].include?(col["Type"]) }.
         map do |col|
           case col["Type"]
@@ -100,7 +100,7 @@
               control_type: "checkbox", label: col["Name"].labelize,
               hint: col["Description"],
               toggle_hint: "Select from list",
-              toggle_field: 
+              toggle_field:
                 { name: col["Name"],
                   label: col["Name"].labelize,
                   type: :string,
@@ -211,7 +211,7 @@
                         control_type: "checkbox", label: col["Name"].labelize,
                         hint: col["Description"],
                         toggle_hint: "Select from list",
-                        toggle_field: 
+                        toggle_field:
                           { name: col["Name"],
                             label: col["Name"].labelize,
                             type: :string,
@@ -260,15 +260,15 @@
                                      { name: col["Name"], type: "integer" }
                                    ] }
                     when "LIST-DATE/TIME"
-                      date_list = col.dig("ListOptions").map do |key, val| 
-                                  [key, val]
+                      date_list = col.dig("ListOptions").map do |key, val|
+                        [key, val]
                       end
                     { name: col["Name"], type: "object",
                       label: col["Name"].labelize,
                       hint: col["Description"],
                       properties: [
-                                    { name: col["Name"], type: "date_time" }
-                                  ] }
+                        { name: col["Name"], type: "date_time" }
+                      ] }
                     else
                       { name: col["Name"], type: "string",
                         control_type: "string", label: col["Name"].labelize,
