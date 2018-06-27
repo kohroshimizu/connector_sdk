@@ -2,24 +2,23 @@
   title: "Google Calendar",
 
    connection: {
-
-    fields: [
-      {
-        name: "client_id",
-        hint: "Find client ID " \
-          "<a href='https://console.cloud.google.com/apis/credentials' " \
-          "target='_blank'>here</a>",
-        optional: false,
-      },
-      {
-        name: "client_secret",
-        hint: "Find client secret " \
-          "<a href='https://console.cloud.google.com/apis/credentials' " \
-          "target='_blank'>here</a>",
-        optional: false,
-        control_type: "password",
-      }
-    ],
+     fields: [
+       {
+         name: "client_id",
+         hint: "Find client ID " \
+           "<a href='https://console.cloud.google.com/apis/credentials' " \
+           "target='_blank'>here</a>",
+         optional: false
+       },
+       {
+         name: "client_secret",
+         hint: "Find client secret " \
+           "<a href='https://console.cloud.google.com/apis/credentials' " \
+           "target='_blank'>here</a>",
+         optional: false,
+         control_type: "password"
+       }
+     ],
 
      authorization: {
        type: "oauth2",
@@ -35,7 +34,7 @@
        end,
 
        acquire: lambda do |connection, auth_code, redirect_uri|
-        response = post("https://accounts.google.com/o/oauth2/token").
+         response = post("https://accounts.google.com/o/oauth2/token").
                     payload(client_id: connection["client_id"],
                             client_secret: connection["client_secret"],
                             grant_type: "authorization_code",
