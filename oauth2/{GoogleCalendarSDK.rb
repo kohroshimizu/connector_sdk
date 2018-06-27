@@ -1,66 +1,66 @@
 {
   title: "Google Calendar",
 
-   connection: {
-     fields: [
-       {
-         name: "client_id",
-         hint: "Find client ID " \
-           "<a href='https://console.cloud.google.com/apis/credentials' " \
-           "target='_blank'>here</a>",
-         optional: false
-       },
-       {
-         name: "client_secret",
-         hint: "Find client secret " \
-           "<a href='https://console.cloud.google.com/apis/credentials' " \
-           "target='_blank'>here</a>",
-         optional: false,
-         control_type: "password"
-       }
-     ],
+  connection: {
+    fields: [
+      {
+        name: "client_id",
+        hint: "Find client ID " \
+          "<a href='https://console.cloud.google.com/apis/credentials' " \
+          "target='_blank'>here</a>",
+        optional: false
+      },
+      {
+        name: "client_secret",
+        hint: "Find client secret " \
+          "<a href='https://console.cloud.google.com/apis/credentials' " \
+          "target='_blank'>here</a>",
+        optional: false,
+        control_type: "password"
+      }
+    ],
 
-     authorization: {
-       type: "oauth2",
+    authorization: {
+      type: "oauth2",
 
-       authorization_url: lambda do |connection|
-         scopes = [
-           "https://www.googleapis.com/auth/calendar",
-           "https://www.googleapis.com/auth/calendar.readonly"
-         ].join(" ")
-         "https://accounts.google.com/o/oauth2/auth?client_id=" \
-         "#{connection['client_id']}&response_type=code&scope=#{scopes}" \
-         "&access_type=offline&include_granted_scopes=true&prompt=consent"
-       end,
+      authorization_url: lambda do |connection|
+        scopes = [
+          "https://www.googleapis.com/auth/calendar",
+          "https://www.googleapis.com/auth/calendar.readonly"
+        ].join(" ")
+          "https://accounts.google.com/o/oauth2/auth?client_id=" \
+          "#{connection['client_id']}&response_type=code&scope=#{scopes}" \
+          "&access_type=offline&include_granted_scopes=true&prompt=consent"
+      end,
 
-       acquire: lambda do |connection, auth_code, redirect_uri|
-         response = post("https://accounts.google.com/o/oauth2/token").
-                    payload(client_id: connection["client_id"],
-                            client_secret: connection["client_secret"],
-                            grant_type: "authorization_code",
-                            code: auth_code,
-                            redirect_uri: redirect_uri).
-                    request_format_www_form_urlencoded
+      acquire: lambda do |connection, auth_code, redirect_uri|
+        response = post("https://accounts.google.com/o/oauth2/token").
+                   payload(client_id: connection["client_id"],
+                           client_secret: connection["client_secret"],
+                           grant_type: "authorization_code",
+                           code: auth_code,
+                           redirect_uri: redirect_uri).
+                   request_format_www_form_urlencoded
 
         [response, nil, nil]
-       end,
+      end,
 
-       refresh: lambda do |connection, refresh_token|
-         post("https://accounts.google.com/o/oauth2/token").
-           payload(client_id: connection["client_id"],
-                   client_secret: connection["client_secret"],
-                   grant_type: "refresh_token",
-                   refresh_token: refresh_token).
-           request_format_www_form_urlencoded
-       end,
+      refresh: lambda do |connection, refresh_token|
+        post("https://accounts.google.com/o/oauth2/token").
+        payload(client_id: connection["client_id"],
+                client_secret: connection["client_secret"],
+                grant_type: "refresh_token",
+                refresh_token: refresh_token).
+        request_format_www_form_urlencoded
+      end,
 
-       refresh_on: [401],
+      refresh_on: [401],
 
-       detect_on: [/"errors"\:\s*\[/],
+      detect_on: [/"errors"\:\s*\[/],
 
-       apply: lambda do |_connection, access_token|
-         headers("Authorization" => "Bearer #{access_token}")
-       end,
+      apply: lambda do |_connection, access_token|
+        headers("Authorization" => "Bearer #{access_token}")
+      end,
      }
 
    },
