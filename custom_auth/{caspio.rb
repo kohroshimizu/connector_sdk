@@ -72,32 +72,46 @@
         map do |col|
           case col["Type"]
           when "STRING"
-            { name: col["Name"], type: "string",
-              control_type: "text", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "string",
+              control_type: "text",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "TEXT"
-            { name: col["Name"], type: "string",
-              control_type: "text-area", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "string",
+              control_type: "text-area",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "NUMBER"
-            { name: col["Name"], type: "number",
-              control_type: "number", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "number",
+              control_type: "number",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "DATE/TIME"
-            { name: col["Name"], type: "date_time",
-              control_type: "date_time", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "date_time",
+              control_type: "date_time",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "INTEGER"
-            { name: col["Name"], type: "integer",
-              control_type: "number", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "integer",
+              control_type: "number",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "CURRENCY"
-            { name: col["Name"], type: "number",
-              control_type: "number", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "number",
+              control_type: "number",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "YES/NO"
-            { name: col["Name"], type: "boolean",
-              control_type: "checkbox", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "boolean",
+              control_type: "checkbox",
+              label: col["Name"].labelize,
               hint: col["Description"],
               toggle_hint: "Select from list",
               toggle_field:
@@ -108,13 +122,17 @@
                   optional: true,
                   toggle_hint: "Use custom value" } }
           when "PASSWORD"
-            { name: col["Name"], type: "string",
-              control_type: "password", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "string",
+              control_type: "password",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           when "TIMESTAMP"
-            { name: col["Name"], type: "timestamp",
-              control_type: "date_time", label: col["Name"].labelize,
-            hint: col["Description"] }
+            { name: col["Name"],
+              type: "timestamp",
+              control_type: "date_time",
+              label: col["Name"].labelize,
+              hint: col["Description"] }
 #           when "RANDOM ID"
 #             { name: col["Name"], type: "string",
 #               control_type: "string", label: col["Name"].labelize,
@@ -137,7 +155,8 @@
                       map do |key, val|
               [val.to_s, key.to_s]
             end
-            { name: col["Name"], control_type: "multiselect",
+            { name: col["Name"],
+              control_type: "multiselect",
               label: col["Name"].labelize,
               pick_list: options,
               pick_list_params: {},
@@ -149,7 +168,8 @@
                       map do |key, val|
               [val.to_s, key.to_s]
             end
-            { name: col["Name"], control_type: "multiselect",
+            { name: col["Name"],
+              control_type: "multiselect",
               label: col["Name"].labelize,
               pick_list: options,
               pick_list_params: {},
@@ -161,15 +181,18 @@
                       map do |key, val|
               [val.to_s, key.to_s]
             end
-            { name: col["Name"], control_type: "multiselect",
+            { name: col["Name"],
+              control_type: "multiselect",
               label: col["Name"].labelize,
               pick_list: options,
               pick_list_params: {},
               delimiter: ",",
               hint: col["Description"] }
           else
-            { name: col["Name"], type: "string",
-              control_type: "string", label: col["Name"].labelize,
+            { name: col["Name"],
+              type: "string",
+              control_type: "string",
+              label: col["Name"].labelize,
               hint: col["Description"] }
           end
         end
@@ -183,32 +206,46 @@
                   map do |col|
                     case col["Type"]
                     when "STRING"
-                      { name: col["Name"], type: "string",
-                        control_type: "text", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "string",
+                        control_type: "text",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "TEXT"
-                      { name: col["Name"], type: "string",
-                        control_type: "text-area", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "string",
+                        control_type: "text-area",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "NUMBER"
-                      { name: col["Name"], type: "number",
-                        control_type: "number", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "number",
+                        control_type: "number",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "DATE/TIME"
-                      { name: col["Name"], type: "date_time",
-                        control_type: "date_time", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "date_time",
+                        control_type: "date_time",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "INTEGER"
-                      { name: col["Name"], type: "integer",
-                        control_type: "number", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "integer",
+                        control_type: "number",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "CURRENCY"
-                      { name: col["Name"], type: "number",
-                        control_type: "number", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "number",
+                        control_type: "number",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "YES/NO"
-                      { name: col["Name"], type: "boolean",
-                        control_type: "checkbox", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "boolean",
+                        control_type: "checkbox",
+                        label: col["Name"].labelize,
                         hint: col["Description"],
                         toggle_hint: "Select from list",
                         toggle_field:
@@ -219,59 +256,78 @@
                             optional: true,
                             toggle_hint: "Use custom value" } }
                     when "PASSWORD"
-                      { name: col["Name"], type: "string",
-                        control_type: "password", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "string",
+                        control_type: "password",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "TIMESTAMP"
-                      { name: col["Name"], type: "timestamp",
-                        control_type: "date_time", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "timestamp",
+                        control_type: "date_time",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "RANDOM ID"
-                      { name: col["Name"], type: "string",
-                        control_type: "string", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "string",
+                        control_type: "string",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "AUTONUMBER"
-                      { name: col["Name"], type: "number",
-                        control_type: "number", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "number",
+                        control_type: "number",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "PREFIXED AUTONUMBER"
-                      { name: col["Name"], type: "number",
-                        control_type: "number", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "number",
+                        control_type: "number",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "GUID"
-                      { name: col["Name"], type: "string",
-                        control_type: "string", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "string",
+                        control_type: "string",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     when "LIST-STRING"
-                      { name: col["Name"], type: "object",
+                      { name: col["Name"],
+                        type: "object",
                         label: col["Name"].labelize,
                         properties: [
-                                      { name: col["Name"] }
-                                    ],
+                          { name: col["Name"] }
+                        ],
                         hint: col["Description"] }
                     when "LIST-NUMBER"
                       num_list = col.dig("ListOptions").map do |key, val|
                         [key, val.to_s]
                       end
-                    { name: col["Name"], type: "object",
+                    { name: col["Name"],
+                      type: "object",
                       label: col["Name"].labelize,
-                       hint: col["Description"],
-                       properties: [
-                                     { name: col["Name"], type: "integer" }
-                                   ] }
+                      hint: col["Description"],
+                      properties: [
+                        { name: col["Name"],
+                          type: "integer" }
+                      ] }
                     when "LIST-DATE/TIME"
                       date_list = col.dig("ListOptions").map do |key, val|
                         [key, val]
                       end
-                    { name: col["Name"], type: "object",
+                    { name: col["Name"],
+                      type: "object",
                       label: col["Name"].labelize,
                       hint: col["Description"],
                       properties: [
-                        { name: col["Name"], type: "date_time" }
+                        { name: col["Name"],
+                          type: "date_time" }
                       ] }
                     else
-                      { name: col["Name"], type: "string",
-                        control_type: "string", label: col["Name"].labelize,
+                      { name: col["Name"],
+                        type: "string",
+                        control_type: "string",
+                        label: col["Name"].labelize,
                         hint: col["Description"] }
                     end
                   end
