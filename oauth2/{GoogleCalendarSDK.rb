@@ -28,9 +28,9 @@
           "https://www.googleapis.com/auth/calendar",
           "https://www.googleapis.com/auth/calendar.readonly"
         ].join(" ")
-          "https://accounts.google.com/o/oauth2/auth?client_id=" \
-          "#{connection['client_id']}&response_type=code&scope=#{scopes}" \
-          "&access_type=offline&include_granted_scopes=true&prompt=consent"
+        "https://accounts.google.com/o/oauth2/auth?client_id=" \
+        "#{connection['client_id']}&response_type=code&scope=#{scopes}" \
+        "&access_type=offline&include_granted_scopes=true&prompt=consent"
       end,
 
       acquire: lambda do |connection, auth_code, redirect_uri|
@@ -51,7 +51,7 @@
                 client_secret: connection["client_secret"],
                 grant_type: "refresh_token",
                 refresh_token: refresh_token).
-        request_format_www_form_urlencoded
+          request_format_www_form_urlencoded
       end,
 
       refresh_on: [401],
@@ -61,9 +61,9 @@
       apply: lambda do |_connection, access_token|
         headers("Authorization" => "Bearer #{access_token}")
       end,
-     }
+    }
 
-   },
+  },
 
   object_definitions: {
     event: {
