@@ -192,8 +192,8 @@
 
         response["items"].each do |event|
           next unless event["end"].present? &&
-             event["end"]["dateTime"].present? &&
-             event["end"]["dateTime"].to_time <= Time.now
+                      event["end"]["dateTime"].present? &&
+                      event["end"]["dateTime"].to_time <= Time.now
           events << event
         end
         {
