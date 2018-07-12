@@ -50,7 +50,7 @@
                   client_secret: connection["client_secret"],
                   grant_type: "refresh_token",
                   refresh_token: refresh_token).
-          request_format_www_form_urlencoded
+            request_format_www_form_urlencoded
       end,
 
       refresh_on: [401],
