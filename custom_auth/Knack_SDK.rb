@@ -386,4 +386,4 @@
         get("https://api.knack.com/v1/objects")['objects'].pluck('name', 'key')
       }
     }
-  }]
+  }
