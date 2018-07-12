@@ -387,10 +387,10 @@
         page = input.delete("page")
         sort_field = input.delete("sort_field")
         sort_order = input.delete("sort_order")
-        object_id = input['object']
-        #call("format_input", { object_id: object_id })
-        #format_input(input)
-        filters = input.reject { |k,v| k == "object" }.map do |k, v|
+        object_id = input["object"]
+        # call("format_input", { object_id: object_id })
+        # format_input(input)
+        filters = input.reject { |k, _v| k == "object" }.map do |k, v|
           if v.is_a?(Hash)
             v.map do |key, va|
               { "field" => k, "operator" => "is", "value" => va,
@@ -402,31 +402,31 @@
         end&.flatten
 
         result = get("https://api.knack.com/v1/objects/#{object_id}/records").
-          params(format: "raw",
-            rows_per_page: rows_per_page,
-            page: page,
-            sort_field: sort_field,
-            sort_order: sort_order,
-            filters: filters.to_json)
-        result['records'].each { |res| call("format_output", res) }
+                 params(format: "raw",
+                        rows_per_page: rows_per_page,
+                        page: page,
+                        sort_field: sort_field,
+                        sort_order: sort_order,
+                        filters: filters.to_json)
+        result["records"].each { |res| call("format_output", res) }
         result
       },
 
-      output_fields: ->(object_definitions) {
+      output_fields: lambda do |object_definitions|
         [
           {
-            name: 'records',
+            name: "records",
             type: :array, of: :object,
-            properties: object_definitions['record_output']
+            properties: object_definitions["record_output"]
           }
         ]
-      },
+      end
     }
   },
 
   pick_lists: {
-    objects: ->(connection) {
+    objects: lambda do
       get("https://api.knack.com/v1/objects")["objects"].pluck("name", "key")
-    }
+    end
   }
 }
