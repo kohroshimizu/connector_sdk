@@ -47,7 +47,7 @@
 
       refresh: lambda do |connection, refresh_token|
         post("https://accounts.google.com/o/oauth2/token").
-        payload(client_id: connection["client_id"],
+          payload(client_id: connection["client_id"],
                 client_secret: connection["client_secret"],
                 grant_type: "refresh_token",
                 refresh_token: refresh_token).
@@ -60,7 +60,7 @@
 
       apply: lambda do |_connection, access_token|
         headers("Authorization" => "Bearer #{access_token}")
-      end,
+      end
     }
 
   },
@@ -184,7 +184,7 @@
                          "&orderBy=startTime&pageToken=#{page}&" \
                          "timeMin=#{input['timeMin']}")
         else
-          param = input.reject { |k, _v| k == "calendarId" }
+          #param = input.reject { |k, _v| k == "calendarId" }
           response = get("https://www.googleapis.com/calendar/v3/calendars/" \
                          "#{input['calendarId']}/events?singleEvents=true&" \
                          "orderBy=startTime&timeMin=#{input['timeMin']}")
