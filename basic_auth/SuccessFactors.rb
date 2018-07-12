@@ -512,7 +512,7 @@
         input.map do |key, val|
           if date_fields.include?(key)
             filter_params <<
-            ( key + " eq '" + "/Date(" + val  + ")/" + "'") unless val.blank?
+              (key + " eq '" + "/Date(" + val + ")/" + "'") unless val.blank?
           else
             filter_params << (key + " eq '" + val + "'") unless val.blank?
           end
