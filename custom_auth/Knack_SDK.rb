@@ -346,41 +346,40 @@
 
       config_fields: [
         {
-          name: 'object',
+          name: "object",
           control_type: :select,
-          pick_list: 'objects',
+          pick_list: "objects",
           optional: false
-          },
+        },
         {
-          name: 'is_user_role',
+          name: "is_user_role",
           type: :boolean,
           hint: "True if 'object' is user roles",
           optional: false
-          }
-        ],
+        }
+      ],
 
-      input_fields: ->(object_definitions) {
-
-        object_definitions['record_search'].ignored('id', 'account_status',
-                           'approval_status', 'profile_keys_raw').
+      input_fields: lambda do |object_definitions|
+        object_definitions['record_search'].
+        ignored("id", "account_status", "approval_status", "profile_keys_raw").
           concat([
-            { name: "rows_per_page", label: "Page Size",
-              sitcky: true,
-              hint: "Number of records to return from one request" },
-            { name: "page", label: "Page no",
-              sitcky: true,
-              hint: "default page is 1"},
-            { name: "sort_field", label: "Sort column",
-              sticky: true },
-            { name: "sort_order", label: "Sort order",
-              sticky: true,
-              control_type: "select",
-              pick_list: [
-                ["Ascending","asc"],
-                ["Deschendig","desc"]
-                ]}
-            ])
-        },
+            {  name: "rows_per_page", label: "Page Size",
+               sitcky: true,
+               hint: "Number of records to return from one request" },
+            {  name: "page", label: "Page no",
+               sitcky: true,
+               hint: "default page is 1" },
+            {  name: "sort_field", label: "Sort column",
+               sticky: true },
+            {  name: "sort_order", label: "Sort order",
+               sticky: true,
+               control_type: "select",
+               pick_list: [
+                ["Ascending", "asc"],
+                ["Deschendig", "desc"]
+              ] }
+          ])
+      end,
 
       execute: ->(_connection, input) {
         rows_per_page = input.delete("rows_per_page")
