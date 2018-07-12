@@ -519,8 +519,9 @@
         end
         filter_string = filter_params.smart_join(" and ")
         objects = get("/odata/v2/" + object_name + "?$filter=" + filter_string).
-          headers("Accept": "application/json",
-                  "Content-Type": "application/json").dig("d", "results")
+                  headers("Accept": "application/json",
+                          "Content-Type": "application/json").
+                  dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
