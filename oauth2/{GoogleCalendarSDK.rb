@@ -41,16 +41,15 @@
                            code: auth_code,
                            redirect_uri: redirect_uri).
                    request_format_www_form_urlencoded
-
         [response, nil, nil]
       end,
 
       refresh: lambda do |connection, refresh_token|
         post("https://accounts.google.com/o/oauth2/token").
           payload(client_id: connection["client_id"],
-                client_secret: connection["client_secret"],
-                grant_type: "refresh_token",
-                refresh_token: refresh_token).
+                  client_secret: connection["client_secret"],
+                  grant_type: "refresh_token",
+                  refresh_token: refresh_token).
           request_format_www_form_urlencoded
       end,
 
