@@ -308,14 +308,14 @@
                       type: f['type'] }
                   end
                 end)
-        }
-      },
-    },
+      }
+    }
+  },
   methods: {
 
     convert_time_out: lambda do |time_val|
-      time_val["date"] = time_val['date'].to_time(format: "%m/%d/%Y")
-      time_val["timestamp"] = time_val['timestamp'].
+      time_val["date"] = time_val["date"].to_time(format: "%m/%d/%Y")
+      time_val["timestamp"] = time_val["timestamp"].
                               to_time(format: "%m/%d/%Y %I:%M %p")
     end,
     format_output: lambda do |res|
@@ -326,18 +326,18 @@
           if val.keys.include?("date")
             call("convert_time_out", val)
           elsif val.keys.include?("date_time")
-            val["times"]&.first&.each do |t_k, t_v|
+            val["times"]&.first&.each do |_t_k, t_v|
               call("convert_time_out", t_v)
             end
           elsif val.keys.include?("times")
-            val["times"]&.first&.each do |t_k, t_v|
+            val["times"]&.first&.each do |_t_k, t_v|
               call("convert_time_out", t_v)
             end
           end
         end
       end
     end
-    },
+  },
 
   actions: {
     search_record: {
@@ -360,28 +360,29 @@
       ],
 
       input_fields: lambda do |object_definitions|
-        object_definitions['record_search'].
-        ignored("id", "account_status", "approval_status", "profile_keys_raw").
+        object_definitions["record_search"].
+          ignored("id", "account_status",
+                  "approval_status", "profile_keys_raw").
           concat([
-            {  name: "rows_per_page", label: "Page Size",
-               sitcky: true,
-               hint: "Number of records to return from one request" },
-            {  name: "page", label: "Page no",
-               sitcky: true,
-               hint: "default page is 1" },
-            {  name: "sort_field", label: "Sort column",
-               sticky: true },
-            {  name: "sort_order", label: "Sort order",
-               sticky: true,
-               control_type: "select",
-               pick_list: [
-                ["Ascending", "asc"],
-                ["Deschendig", "desc"]
-              ] }
-          ])
+                   {  name: "rows_per_page", label: "Page Size",
+                      sitcky: true,
+                      hint: "Number of records to return from one request" },
+                   {  name: "page", label: "Page no",
+                      sitcky: true,
+                      hint: "default page is 1" },
+                   {  name: "sort_field", label: "Sort column",
+                      sticky: true },
+                   {  name: "sort_order", label: "Sort order",
+                      sticky: true,
+                      control_type: "select",
+                      pick_list: [
+                        ["Ascending", "asc"],
+                        ["Deschendig", "desc"]
+                      ] }
+                 ])
       end,
 
-      execute: ->(_connection, input) {
+      execute: lambda do |_connection, input|
         rows_per_page = input.delete("rows_per_page")
         page = input.delete("page")
         sort_field = input.delete("sort_field")
@@ -409,7 +410,7 @@
                         filters: filters.to_json)
         result["records"].each { |res| call("format_output", res) }
         result
-      },
+      end,
 
       output_fields: lambda do |object_definitions|
         [
