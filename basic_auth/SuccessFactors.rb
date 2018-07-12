@@ -24,8 +24,7 @@
         label: "API endpoint",
         optional: false,
         hint: "Provide the endpoint of the API excluding /odata/v2 " \
-        "e.g. for location USA, Arizona, Chandler" \
-        "- <code>https://api4.successfactors.com</code>"
+        "e.g. for location USA, Arizona, Chandler - <code>https://api4.successfactors.com</code>"
       }
     ],
 
@@ -49,8 +48,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@visible"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -135,8 +133,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@creatable"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -222,12 +219,10 @@
         key_column = call(:object_key, {object_name: config['object_name']})
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@updatable"] == "true" }.
           map do |o|
-            optional = o["@Name"] ==
-            key_column ? false : o["@required"].include?("false")
+            optional = o["@Name"] == key_column ? false : o["@required"].include?("false")
             case o["@Type"]
             when "Edm.String"
               { name: o["@Name"], type: "string",
@@ -310,8 +305,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@upsertable"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -396,8 +390,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@filterable"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -490,8 +483,7 @@
   actions: {
 
     search_object: {
-      description: 'Search <span class="provider">Objects</span> in ' \
-                   '<span class="provider"> Success Factors</span>',
+      description: 'Search <span class="provider">Objects</span> in <span class="provider"> Success Factors</span>',
       subtitle: "Search Object's in Success Factors",
       config_fields: [
         { name: "object_name", control_type: :select,
@@ -511,8 +503,7 @@
         filter_params = []
         input.map do |key, val|
           if date_fields.include?(key)
-            filter_params << ( key + " eq '" + "/Date(" + val  + ")/" + "'")
-            unless val.blank?
+            filter_params << ( key + " eq '" + "/Date(" + val  + ")/" + "'") unless val.blank?
           else
             filter_params << ( key + " eq '" + val + "'") unless val.blank?
           end
@@ -598,8 +589,7 @@
         payload = input.map do |key, value|
           if date_fields.include?(key)
             if !value.blank?
-              date_time = value.to_time.utc.iso8601.to_i * 1000 unless
-              value.blank?
+              date_time = value.to_time.utc.iso8601.to_i * 1000 unless value.blank?
               { key => "\/Date(" + date_time + ")\/" }
             else
               { key => value }
@@ -625,8 +615,7 @@
       end,
       sample_output: lambda do |connection, input|
         date_fields = call(:date_fields, { object_name: input["object_name"] } )
-        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
-                  dig("d", "results")
+        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -670,8 +659,7 @@
         payload = input.map do |key, value|
           if date_fields.include?(key)
             if !value.blank?
-              date_time = value.to_time.utc.iso8601.to_i * 1000 unless
-              value.blank?
+              date_time = value.to_time.utc.iso8601.to_i * 1000 unless value.blank?
               { key => "\/Date(" + date_time + ")\/"}
             else
               { key => value }
