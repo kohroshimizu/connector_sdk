@@ -541,7 +541,7 @@
       sample_output: lambda do |connection, input|
         date_fields = call(:date_fields, { object_name: input["object_name"] })
         objects = get("/odata/v2/" + input["object_name"]).
-          params("$top": 1).dig("d", "results")
+                  params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -577,12 +577,12 @@
       input_fields: lambda do |object_definitions|
         object_definitions["object_create"]
       end,
-      execute: lambda do |connection, input|
+      execute: lambda do |_connection, input|
         object_name = input.delete("object_name")
         # set empployee id on User creation
         if object_name == "User" && input["empId"].blank?
           employee_id = post("/odata/v2/generateNextPersonID?$format=json").
-            dig("d", "GenerateNextPersonIDResponse", "personID")
+                        dig("d", "GenerateNextPersonIDResponse", "personID")
           input["empId"] = employee_id
         end
         date_fields = call("date_fields", object_name: object_name)
@@ -604,17 +604,16 @@
           headers("Accept": "application/json",
                   "Content-Type": "application/json").
           payload(payload).
-          after_response do |code, body, header, message|
+          after_response do |_code, body, _header, _message|
             body.dig("d")
-          end.after_error_response(404) do |code, body, header, message|
+          end.after_error_response(404) do |_code, body, _header, message|
             error("#{message}: #{body}")
           end
-
       end,
       output_fields: lambda do |object_definitions|
         object_definitions["object_output"]
       end,
-      sample_output: lambda do |connection, input|
+      sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
                   dig("d", "results")
