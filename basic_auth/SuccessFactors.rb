@@ -514,7 +514,7 @@
             filter_params <<
             ( key + " eq '" + "/Date(" + val  + ")/" + "'") unless val.blank?
           else
-            filter_params << ( key + " eq '" + val + "'") unless val.blank?
+            filter_params << (key + " eq '" + val + "'") unless val.blank?
           end
         end
         filter_string = filter_params.smart_join(" and ")
