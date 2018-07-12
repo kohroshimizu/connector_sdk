@@ -511,7 +511,7 @@
           if date_fields.include?(key)
             { key => val.to_time.utc.iso8601 }
           elsif list_fields.include?(key)
-            { key => val.split(",").map(&:to_i) }
+            { key => val.split(",").map { |e| e.to_i } }
           else
             { key => val }
           end
