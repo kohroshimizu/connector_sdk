@@ -742,15 +742,18 @@
         object_name = input.delete("object_name")
         key_column = call(:object_key, { object_name: object_name } )
         date_fields = call(:date_fields, { object_name: object_name } )
-        last_updated_since ||= (input["since"].presence || 1.hour.ago).to_time.utc.iso8601
+        last_updated_since ||= (input["since"].presence || 1.hour.ago).
+        to_time.utc.iso8601
         objects = get("/odata/v2/" + object_name ).
-          params("$filter": "lastModifiedDateTime gt " + "datetimeoffset'" + last_updated_since + "'",
-            "$orderby": "lastModifiedDateTime asc").
-          headers("Accept": "application/json",
-            "Content-Type": "application/json").dig("d", "results")
+                  params("$filter": "lastModifiedDateTime gt " +
+                         "datetimeoffset'" + last_updated_since + "'",
+                         "$orderby": "lastModifiedDateTime asc").
+                  headers("Accept": "application/json",
+                          "Content-Type": "application/json").dig("d", "results")
         # add custom column for dedup, timestamp conversion
         final_objects = objects.map { |obj|
-          obj["object_id"] = obj[key_column] + "-" + obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
+          obj["object_id"] = obj[key_column] + "-" +
+          obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -764,12 +767,13 @@
             end
           end.inject(:merge)
         }
-        last_updated_since = final_objects.last['lastModifiedDateTime'] unless final_objects.size == 0
+        last_updated_since = final_objects.last["lastModifiedDateTime"] unless
+        final_objects.size.zero?
         final_objects
         {
           events: final_objects,
           next_poll: last_updated_since,
-          can_poll_more: objects.size > 0
+          can_poll_more: objects.size.positive?
         }
       end,
       dedup: lambda do |object|
@@ -778,9 +782,10 @@
       output_fields: lambda do |object_defintions|
         object_defintions["object_output"]
       end,
-      sample_output: lambda do |connection, input|
-        date_fields = call(:date_fields, { object_name: input["object_name"] } )
-        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).dig("d", "results")
+      sample_output: lambda do |_connection, input|
+        date_fields = call(:date_fields, object_name: input["object_name"])
+        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
+        dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -805,9 +810,9 @@
   pick_lists: {
     entity_set: lambda do
       get("/odata/v2/$metadata").response_format_xml.
-      dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 0,
-       "EntityContainer", 0, "EntitySet").map do |obj|
-        [ obj["@label"], obj["@Name"] ]
+        dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 0,
+            "EntityContainer", 0, "EntitySet").map do |obj|
+          [obj["@label"], obj["@Name"]]
       end
     end
   }
