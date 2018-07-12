@@ -685,7 +685,7 @@
       sample_output: lambda do |connection, input|
         date_fields = call(:date_fields, { object_name: input["object_name"] } )
         objects = get("/odata/v2/" + input["object_name"]).
-          params("$top": 1).dig("d", "results")
+                  params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -714,7 +714,8 @@
       description: "New or Updated <span class='provider'>Object</span> in " \
       "<span class='provider'>Success Factors</span>",
       title_hint: "New or Updated object in Success Factors",
-      help: "Each object created or updated processed as a single trigger event.",
+      help: "Each object created or updated processed" \
+            " as a single trigger event.",
       config_fields: [
         { name: "object_name", control_type: :select,
           pick_list: "entity_set",
@@ -738,22 +739,24 @@
             hint: "Fetch objects from specified time" }
         ]
       end,
-      poll: lambda do |connection, input, last_updated_since|
+      poll: lambda do |_connection, input, last_updated_since|
         object_name = input.delete("object_name")
-        key_column = call(:object_key, { object_name: object_name } )
-        date_fields = call(:date_fields, { object_name: object_name } )
+        key_column = call(:object_key, object_name: object_name)
+        date_fields = call(:date_fields, object_name: object_name)
         last_updated_since ||= (input["since"].presence || 1.hour.ago).
-        to_time.utc.iso8601
-        objects = get("/odata/v2/" + object_name ).
-                  params("$filter": "lastModifiedDateTime gt " +
-                         "datetimeoffset'" + last_updated_since + "'",
+                               to_time.utc.iso8601
+        objects = get("/odata/v2/" + object_name).
+                  params("$filter": "lastModifiedDateTime gt " \
+                                    "datetimeoffset'" + last_updated_since +
+                                    "'",
                          "$orderby": "lastModifiedDateTime asc").
                   headers("Accept": "application/json",
-                          "Content-Type": "application/json").dig("d", "results")
+                          "Content-Type": "application/json").
+                  dig("d", "results")
         # add custom column for dedup, timestamp conversion
         final_objects = objects.map { |obj|
           obj["object_id"] = obj[key_column] + "-" +
-          obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
+                             obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -785,7 +788,7 @@
       sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
-        dig("d", "results")
+                  dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -812,7 +815,7 @@
       get("/odata/v2/$metadata").response_format_xml.
         dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 0,
             "EntityContainer", 0, "EntitySet").map do |obj|
-          [obj["@label"], obj["@Name"]]
+        [obj["@label"], obj["@Name"]]
       end
     end
   }
