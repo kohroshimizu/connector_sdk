@@ -184,7 +184,6 @@
                          "&orderBy=startTime&pageToken=#{page}&" \
                          "timeMin=#{input['timeMin']}")
         else
-          #param = input.reject { |k, _v| k == "calendarId" }
           response = get("https://www.googleapis.com/calendar/v3/calendars/" \
                          "#{input['calendarId']}/events?singleEvents=true&" \
                          "orderBy=startTime&timeMin=#{input['timeMin']}")
