@@ -547,7 +547,7 @@
             properties: object_definitions["object_output"] }
         ]
       end,
-      sample_output: lambda do |connection, input|
+      sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).
                   params("$top": 1).dig("d", "results")
@@ -594,7 +594,7 @@
                         dig("d", "GenerateNextPersonIDResponse", "personID")
           input["empId"] = employee_id
         end
-        date_fields = call("date_fields", { object_name: object_name })
+        date_fields = call("date_fields", object_name: object_name)
         payload = input.map do |key, value|
           if date_fields.include?(key)
             if !value.blank?
@@ -622,8 +622,8 @@
       output_fields: lambda do |object_definitions|
         object_definitions["object_output"]
       end,
-      sample_output: lambda do |connection, input|
-        date_fields = call(:date_fields, { object_name: input["object_name"] } )
+      sample_output: lambda do |_connection, input|
+        date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
                   dig("d", "results")
         final_objects = objects.map { |obj|
@@ -671,7 +671,7 @@
             if !value.blank?
               date_time = value.to_time.utc.iso8601.to_i * 1000 unless
               value.blank?
-              { key => "\/Date(" + date_time + ")\/"}
+              { key => "\/Date(" + date_time + ")\/" }
             else
               { key => value }
             end
