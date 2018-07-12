@@ -2225,18 +2225,21 @@
     },
 
   pick_lists: {
-    sites: ->(connection) {
+    sites: lambda do
       get("https://api.netlify.com/api/v1/sites").
         map { |site| [site["name"], site["id"]] }
-      },
-    forms: ->(connection) {
+    end,
+
+    forms: lambda do
       get("https://api.netlify.com/api/v1/forms").
         map { |form| [form["name"], form["id"]] }
-      },
-    hook_types: ->(connection) {
+    end,
+
+    hook_types: lambda do
       get("https://api.netlify.com/api/v1/hooks/types").
         map{ |ht| [ht["name"], ht["name"]] }
-      },
+    end,
+    
     event_types: ->(connection, hook_type:) {
       selected_hook_type = nil
       get("https://api.netlify.com/api/v1/hooks/types").each do |ht|
@@ -2246,7 +2249,8 @@
       end
       selected_hook_type["events"].map{ |et| [et, et] }
       },
-    url_event_types: ->(connection) {
+
+    url_event_types: lambda do
       selected_hook_type = nil
       get("https://api.netlify.com/api/v1/hooks/types").each do |ht|
         if ht["name"]=="url"
@@ -2254,6 +2258,6 @@
         end
       end
       selected_hook_type["events"].map{ |et| [et, et] }
-      }
+    end
     }
   }
