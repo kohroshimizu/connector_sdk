@@ -323,7 +323,7 @@
         object_definitions['record_search'].ignored('id', 'account_status', 'approval_status', 'profile_keys_raw').
           concat([
             { name: "rows_per_page", label: "Page Size",
-              sitcky: true, 
+              sitcky: true,
               hint: "Number of records to return from one request" },
             { name: "page", label: "Page no",
               sitcky: true,
@@ -332,7 +332,7 @@
               sticky: true },
             { name: "sort_order", label: "Sort order",
               sticky: true,
-              control_type: "select", 
+              control_type: "select",
               pick_list: [
                 ["Ascending","asc"],
                 ["Deschendig","desc"]
@@ -367,7 +367,7 @@
             filters: filters.to_json)
         result['records'].each { |res| call("format_output", res) }
         result
-        },
+      },
 
       output_fields: ->(object_definitions) {
         [
@@ -375,15 +375,15 @@
             name: 'records',
             type: :array, of: :object,
             properties: object_definitions['record_output']
-            }
-          ]
-        },
-      }
-    },
+          }
+        ]
+      },
+    }
+  },
 
   pick_lists: {
     objects: ->(connection) {
-      get("https://api.knack.com/v1/objects")['objects'].pluck('name', 'key')
-      }
+      get("https://api.knack.com/v1/objects")["objects"].pluck("name", "key")
     }
+  }
 }
