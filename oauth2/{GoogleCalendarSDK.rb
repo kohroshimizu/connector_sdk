@@ -193,11 +193,10 @@
         events = []
 
         response["items"].each do |event|
-          if event["end"].present? &&
+          next unless event["end"].present? &&
              event["end"]["dateTime"].present? &&
              event["end"]["dateTime"].to_time <= Time.now
-            events << event
-          end
+          events << event
         end
         {
           events: events,
