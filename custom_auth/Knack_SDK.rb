@@ -43,7 +43,8 @@
               [
                 { name: 'account_status' },
                 { name: 'approval_status' },
-                { name: 'profile_keys_raw', type: :array, of: :object, properties: [
+                { name: 'profile_keys_raw', type: :array, of: :object,
+                  properties: [
                   { name: 'id' },
                   { name: 'identifier'}
                   ]}
@@ -52,12 +53,16 @@
               []
             end
             ).concat(
-              get("https://api.knack.com/v1/objects/#{config['object']}/fields")['fields'].reject {|f| f['type']=='signature'||f['type']=='equation' }.
+              get("https://api.knack.com/v1/objects/#{config['object']}/" \
+                  "fields")['fields'].
+                  reject {|f| f['type']=='signature'||f['type']=='equation' }.
                 map do |f|
                   if f['type'] == 'address'
                     {
                       name: f['key'],
-                      hint: "Provide longitude/latitude values if address input type is longitude/latitude else provide remaining fields",
+                      hint: "Provide longitude/latitude values if address" \
+                      " input type is longitude/latitude else " \
+                      "provide remaining fields",
                       label: f['label'].labelize,
                       type: :object, properties: [
                         { name: 'longitude', type: :integer },
@@ -70,35 +75,43 @@
                         ]
                       }
                   elsif f['type'] == 'name'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :object,
+                      properties: [
                       { name: 'title' },
                       { name: 'first' },
                       { name: 'middle' },
                       { name: 'last' }]
                       }
                   elsif f['type'] == 'connection'
-                    { name: f['key'], label: f['label'].labelize, type: :array, of: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :array,
+                      of: :object, properties: [
                       { name: 'id' },
                       { name: 'identifier' }
                       ]
                       }
                   elsif f['type'] == 'rating'
-                    { name: f['key'], label: f['label'].labelize, type: :integer, hint: "Values are 1 to 3" }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :integer, hint: "Values are 1 to 3" }
                   elsif f['type'] == 'number'
-                    { name: f['key'], label: f['label'].labelize, type: :integer }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :integer }
                   elsif f['type'] == 'auto_increment'
-                    { name: f['key'], label: f['label'].labelize, type: :integer }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :integer }
                   elsif f['type'] == 'phone'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :object,
+                      properties: [
                       { name: 'formatted' },
                       { name: 'full' },
                       { name: 'number' },
                       { name: 'area' }]
                       }
                   elsif f['type'] == 'rich_text'
-                    { name: f['key'], label: f['label'].labelize, hint: "HTML can be used" }
+                    { name: f['key'], label: f['label'].labelize,
+                      hint: "HTML can be used" }
                   elsif f['type'] == 'image'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :object,
+                      properties: [
                       { name: 'id' },
                       { name: 'application_id' },
                       { name: 's3', type: :boolean },
@@ -109,7 +122,8 @@
                       { name: 'size', type: :integer }]
                       }
                   elsif f['type'] == 'file'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :object,
+                      properties: [
                       { name: 'id' },
                       { name: 'application_id' },
                       { name: 's3', type: :boolean },
@@ -120,21 +134,25 @@
                       { name: 'size', type: :integer }]
                       }
                   elsif f['type'] == 'link'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :object,
+                      properties: [
                       { name: 'url' },
                       { name: 'label' }]
                       }
                   elsif f['type'] == 'email'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize, type: :object,
+                      properties: [
                       { name: 'email' },
                       { name: 'label' }]
                       }
                   elsif f['type'] == 'user_roles'
-                    { name: f['key'], type: :array, label: f['label'].labelize, properties: [
+                    { name: f['key'], type: :array, label: f['label'].labelize,
+                      properties: [
                       { name: f['key'], label: f['label'].labelize }
                       ] }
                   elsif f['type'] == 'timer'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'times', type: :array, of: :object, properties: [
                         { name: 'from', type: :object, properties: [
                           { name: 'date', type: :date_time },
@@ -161,7 +179,8 @@
                       { name: 'total_time', type: :integer }]
                       }
                   elsif f['type'] == 'date_time'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'date', type: :date_time },
                       { name: 'date_formatted' },
                       { name: 'hours', type: :integer },
@@ -172,7 +191,8 @@
                       { name: 'time', type: :integer }]
                       }
                   else
-                    { name: f['key'], label: f['label'].labelize, type: f['type'] }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: f['type'] }
                   end
                 end)
         }
@@ -187,7 +207,8 @@
               [
                 { name: 'account_status' },
                 { name: 'approval_status' },
-                { name: 'profile_keys_raw', type: :array, of: :object, properties: [
+                { name: 'profile_keys_raw', type: :array,
+                  of: :object, properties: [
                   { name: 'id' },
                   { name: 'identifier'}
                   ]}
@@ -196,12 +217,17 @@
               []
             end
             ).concat(
-              get("https://api.knack.com/v1/objects/#{config['object']}/fields")['fields'].reject {|f| f['type']=='signature'||f['type']=='equation'||f['type']=='user_roles' }.
+              get("https://api.knack.com/v1/objects/#{config['object']}/" \
+                  "fields")['fields'].
+                  reject {|f| f['type']=='signature'||
+                          f['type']=='equation'||f['type']=='user_roles' }.
                 map do |f|
                   if f['type'] == 'address'
                     {
                       name: f['key'],
-                      hint: "Provide longitude/latitude values if address input type is longitude/latitude else provide remaining fields",
+                      hint: "Provide longitude/latitude values if " \
+                            "address input type is longitude/latitude " \
+                            "else provide remaining fields",
                       label: f['label'].labelize,
                       type: :object, properties: [
                         { name: 'longitude', type: :integer },
@@ -214,44 +240,55 @@
                         ]
                       }
                   elsif f['type'] == 'name'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'title' },
                       { name: 'first' },
                       { name: 'middle' },
                       { name: 'last' }]
                       }
                   elsif f['type'] == 'rating'
-                    { name: f['key'], label: f['label'].labelize, type: :integer, hint: "Values are 1 to 3" }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :integer, hint: "Values are 1 to 3" }
                   elsif f['type'] == 'number'
-                    { name: f['key'], label: f['label'].labelize, type: :integer }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :integer }
                   elsif f['type'] == 'auto_increment'
-                    { name: f['key'], label: f['label'].labelize, type: :integer }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :integer }
                   elsif f['type'] == 'phone'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'phone_number' }]
                       }
                   elsif f['type'] == 'rich_text'
-                    { name: f['key'], label: f['label'].labelize, hint: "HTML can be used" }
+                    { name: f['key'], label: f['label'].labelize,
+                      hint: "HTML can be used" }
                   elsif f['type'] == 'image'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'filename' },
                       { name: 'url' }]
                       }
                   elsif f['type'] == 'file'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'filename' },
                       { name: 'url' }]
                       }
                   elsif f['type'] == 'link'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'url' }]
                       }
                   elsif f['type'] == 'email'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'email' }]
                       }
                   elsif f['type'] == 'timer'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'times', type: :array, of: :object, properties: [
                         { name: 'from', type: :object, properties: [
                           { name: 'date', type: :date_time }]
@@ -262,11 +299,13 @@
                         }]
                       }
                   elsif f['type'] == 'date_time'
-                    { name: f['key'], label: f['label'].labelize, type: :object, properties: [
+                    { name: f['key'], label: f['label'].labelize,
+                      type: :object, properties: [
                       { name: 'date', type: :date_time }]
                       }
                   else
-                    { name: f['key'], label: f['label'].labelize, type: f['type'] }
+                    { name: f['key'], label: f['label'].labelize,
+                      type: f['type'] }
                   end
                 end)
         }
@@ -276,7 +315,8 @@
 
     convert_time_out: lambda do |time_val|
       time_val["date"] = time_val['date'].to_time(format: "%m/%d/%Y")
-      time_val["timestamp"] = time_val['timestamp'].to_time(format: "%m/%d/%Y %I:%M %p")
+      time_val["timestamp"] = time_val['timestamp'].
+                              to_time(format: "%m/%d/%Y %I:%M %p")
     end,
     format_output: lambda do |res|
       res&.each do |key, val|
@@ -301,7 +341,8 @@
 
   actions: {
     search_record: {
-      description: "Search for <span class='provider'>record</span> in <span class='provider'>Knack</span>",
+      description: "Search for <span class='provider'>record</span>" \
+      " in <span class='provider'>Knack</span>",
 
       config_fields: [
         {
@@ -320,7 +361,8 @@
 
       input_fields: ->(object_definitions) {
 
-        object_definitions['record_search'].ignored('id', 'account_status', 'approval_status', 'profile_keys_raw').
+        object_definitions['record_search'].ignored('id', 'account_status',
+                           'approval_status', 'profile_keys_raw').
           concat([
             { name: "rows_per_page", label: "Page Size",
               sitcky: true,
@@ -351,7 +393,8 @@
         filters = input.reject { |k,v| k == "object" }.map do |k, v|
           if v.is_a?(Hash)
             v.map do |key, va|
-              { "field" => k, "operator" => "is", "value" => va, "field_name" => key }
+              { "field" => k, "operator" => "is", "value" => va,
+                "field_name" => key }
             end
           else
             { "field" => k, "operator" => "is", "value" => v }
