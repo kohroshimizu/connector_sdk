@@ -24,8 +24,7 @@
         label: "API endpoint",
         optional: false,
         hint: "Provide the endpoint of the API excluding /odata/v2 " \
-        "e.g. for location USA, Arizona, " \
-        "Chandler - <code>https://api4.successfactors.com</code>"
+        "e.g. for location USA, Arizona, Chandler - <code>https://api4.successfactors.com</code>"
       }
     ],
 
@@ -49,8 +48,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@visible"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -135,8 +133,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@creatable"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -222,12 +219,10 @@
         key_column = call(:object_key, {object_name: config['object_name']})
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@updatable"] == "true" }.
           map do |o|
-            optional =
-            o["@Name"] == key_column ? false : o["@required"].include?("false")
+            optional = o["@Name"] == key_column ? false : o["@required"].include?("false")
             case o["@Type"]
             when "Edm.String"
               { name: o["@Name"], type: "string",
@@ -310,8 +305,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@upsertable"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -396,8 +390,7 @@
       fields: lambda do |connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
           response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
+          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType", 0, "Property").
           select{ |field| field["@filterable"] == "true" }.
           map do |o|
             case o["@Type"]
@@ -490,8 +483,7 @@
   actions: {
 
     search_object: {
-      description: 'Search <span class="provider">Objects</span> in ' \
-                   '<span class="provider"> Success Factors</span>',
+      description: 'Search <span class="provider">Objects</span> in <span class="provider"> Success Factors</span>',
       subtitle: "Search Object's in Success Factors",
       config_fields: [
         { name: "object_name", control_type: :select,
@@ -511,8 +503,7 @@
         filter_params = []
         input.map do |key, val|
           if date_fields.include?(key)
-            filter_params << ( key + " eq '" + "/Date(" + val  + ")/" + "'")
-            unless val.blank?
+            filter_params << ( key + " eq '" + "/Date(" + val  + ")/" + "'") unless val.blank?
           else
             filter_params << ( key + " eq '" + val + "'") unless val.blank?
           end
@@ -520,7 +511,7 @@
         filter_string = filter_params.smart_join(" and ")
         objects = get("/odata/v2/" + object_name + "?$filter=" + filter_string).
           headers("Accept": "application/json",
-                  "Content-Type": "application/json").dig("d", "results")
+            "Content-Type": "application/json").dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -547,10 +538,10 @@
             properties: object_definitions["object_output"] }
         ]
       end,
-      sample_output: lambda do |_connection, input|
-        date_fields = call(:date_fields, object_name: input["object_name"])
+      sample_output: lambda do |connection, input|
+        date_fields = call(:date_fields, { object_name: input["object_name"] })
         objects = get("/odata/v2/" + input["object_name"]).
-                  params("$top": 1).dig("d", "results")
+          params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -586,20 +577,19 @@
       input_fields: lambda do |object_definitions|
         object_definitions["object_create"]
       end,
-      execute: lambda do |_connection, input|
+      execute: lambda do |connection, input|
         object_name = input.delete("object_name")
         # set empployee id on User creation
         if object_name == "User" && input["empId"].blank?
           employee_id = post("/odata/v2/generateNextPersonID?$format=json").
-                        dig("d", "GenerateNextPersonIDResponse", "personID")
+            dig("d", "GenerateNextPersonIDResponse", "personID")
           input["empId"] = employee_id
         end
-        date_fields = call("date_fields", object_name: object_name)
+        date_fields = call("date_fields", { object_name: object_name })
         payload = input.map do |key, value|
           if date_fields.include?(key)
             if !value.blank?
-              date_time = value.to_time.utc.iso8601.to_i * 1000 unless
-              value.blank?
+              date_time = value.to_time.utc.iso8601.to_i * 1000 unless value.blank?
               { key => "\/Date(" + date_time + ")\/" }
             else
               { key => value }
@@ -613,19 +603,19 @@
           headers("Accept": "application/json",
                   "Content-Type": "application/json").
           payload(payload).
-          after_response do |_code, body, _header, _message|
+          after_response do |code, body, header, message|
             body.dig("d")
-          end.after_error_response(404) do |_code, body, _header, message|
+          end.after_error_response(404) do |code, body, header, message|
             error("#{message}: #{body}")
           end
+
       end,
       output_fields: lambda do |object_definitions|
         object_definitions["object_output"]
       end,
-      sample_output: lambda do |_connection, input|
-        date_fields = call(:date_fields, object_name: input["object_name"])
-        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
-                  dig("d", "results")
+      sample_output: lambda do |connection, input|
+        date_fields = call(:date_fields, { object_name: input["object_name"] } )
+        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -662,16 +652,15 @@
       input_fields: lambda do |object_definitions|
         object_definitions["object_update"]
       end,
-      execute: lambda do |_connection, input|
+      execute: lambda do |connection, input|
         object_name = input.delete("object_name")
-        key_column = call(:object_key, object_name: object_name)
-        date_fields = call(:date_fields, object_name: object_name)
+        key_column = call(:object_key, { object_name: object_name } )
+        date_fields = call(:date_fields, { object_name: object_name } )
         payload = input.map do |key, value|
           if date_fields.include?(key)
             if !value.blank?
-              date_time = value.to_time.utc.iso8601.to_i * 1000 unless
-              value.blank?
-              { key => "\/Date(" + date_time + ")\/" }
+              date_time = value.to_time.utc.iso8601.to_i * 1000 unless value.blank?
+              { key => "\/Date(" + date_time + ")\/"}
             else
               { key => value }
             end
@@ -680,24 +669,23 @@
           end
         end.inject(:merge)
 
-        put("/odata/v2/" + object_name +
-            "('" + input.delete(key_column) + "')").
+        put("/odata/v2/" + object_name + "('" + input.delete(key_column)  + "')").
           params("$format": "JSON").
           headers("Content-Type": "application/json;charset=utf-8").
           payload(payload).
-          after_response do |_code, body, _header, _message|
+          after_response do |code, body, header, message|
             body
-          end.after_error_response(500) do |_code, body, _header, message|
+          end.after_error_response(500) do |code, body, header, message|
             error("#{message}: #{body}")
           end
       end,
       output_fields: lambda do |object_definitions|
         object_definitions["object_output"]
       end,
-      sample_output: lambda do |_connection, input|
-        date_fields = call(:date_fields, object_name: input["object_name"])
+      sample_output: lambda do |connection, input|
+        date_fields = call(:date_fields, { object_name: input["object_name"] } )
         objects = get("/odata/v2/" + input["object_name"]).
-                  params("$top": 1).dig("d", "results")
+          params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -726,8 +714,7 @@
       description: "New or Updated <span class='provider'>Object</span> in " \
       "<span class='provider'>Success Factors</span>",
       title_hint: "New or Updated object in Success Factors",
-      help: "Each object created or updated processed " \
-      "as a single trigger event.",
+      help: "Each object created or updated processed as a single trigger event.",
       config_fields: [
         { name: "object_name", control_type: :select,
           pick_list: "entity_set",
@@ -751,23 +738,19 @@
             hint: "Fetch objects from specified time" }
         ]
       end,
-      poll: lambda do |_connection, input, last_updated_since|
+      poll: lambda do |connection, input, last_updated_since|
         object_name = input.delete("object_name")
-        key_column = call(:object_key, object_name: object_name)
-        date_fields = call(:date_fields, object_name: object_name)
-        last_updated_since ||= (input["since"].presence || 1.hour.ago).
-                               to_time.utc.iso8601
-        objects = get("/odata/v2/" + object_name).
-                  params("$filter": "lastModifiedDateTime gt " \
-                         "datetimeoffset'" + last_updated_since + "'",
-                         "$orderby": "lastModifiedDateTime asc").
-                  headers("Accept": "application/json",
-                          "Content-Type": "application/json").
-                  dig("d", "results")
+        key_column = call(:object_key, { object_name: object_name } )
+        date_fields = call(:date_fields, { object_name: object_name } )
+        last_updated_since ||= (input["since"].presence || 1.hour.ago).to_time.utc.iso8601
+        objects = get("/odata/v2/" + object_name ).
+          params("$filter": "lastModifiedDateTime gt " + "datetimeoffset'" + last_updated_since + "'",
+            "$orderby": "lastModifiedDateTime asc").
+          headers("Accept": "application/json",
+            "Content-Type": "application/json").dig("d", "results")
         # add custom column for dedup, timestamp conversion
         final_objects = objects.map { |obj|
-          obj["object_id"] = obj[key_column] + "-" +
-                             obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
+          obj["object_id"] = obj[key_column] + "-" + obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -781,13 +764,12 @@
             end
           end.inject(:merge)
         }
-        last_updated_since = final_objects.last["lastModifiedDateTime"] unless
-        final_objects.size.zero?
+        last_updated_since = final_objects.last['lastModifiedDateTime'] unless final_objects.size == 0
         final_objects
         {
           events: final_objects,
           next_poll: last_updated_since,
-          can_poll_more: objects.size.positive?
+          can_poll_more: objects.size > 0
         }
       end,
       dedup: lambda do |object|
@@ -796,10 +778,9 @@
       output_fields: lambda do |object_defintions|
         object_defintions["object_output"]
       end,
-      sample_output: lambda do |_connection, input|
-        date_fields = call(:date_fields, object_name: input["object_name"])
-        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
-                  dig("d", "results")
+      sample_output: lambda do |connection, input|
+        date_fields = call(:date_fields, { object_name: input["object_name"] } )
+        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).dig("d", "results")
         final_objects = objects.map { |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
@@ -818,14 +799,15 @@
         final_objects&.first || {}
       end
     }
+
   },
 
   pick_lists: {
     entity_set: lambda do
       get("/odata/v2/$metadata").response_format_xml.
-        dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 0,
-            "EntityContainer", 0, "EntitySet").map do |obj|
-        [obj["@label"], obj["@Name"]]
+      dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 0,
+       "EntityContainer", 0, "EntitySet").map do |obj|
+        [ obj["@label"], obj["@Name"] ]
       end
     end
   }
