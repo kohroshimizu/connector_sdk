@@ -109,31 +109,31 @@
       }
     },
 
-  test: lambda do |connection|
+  test: lambda do
     get("https://api.yarooms.com/accounts")["data"]
   end,
 
   pick_lists: {
-    location: lambda do |connection|
+    location: lambda do
       get("https://api.yarooms.com/locations")["data"]["list"].
         map { |location| [location["name"], location["id"]] }
     end,
 
-    group: lambda do |connection|
+    group: lambda do
       get("https://api.yarooms.com/groups")["data"]["list"].
         map { |group| [group["name"], group["id"]] }
     end,
 
-    room: lambda do |connection|
+    room: lambda do
       get("https://api.yarooms.com/rooms")["data"]["list"].
         map { |room| [room["name"], room["id"]] }
     end,
 
-    meeting_type: lambda do |connection|
+    meeting_type: lambda do
       get("https://api.yarooms.com/types")["data"]["list"].
         map { |meeting_type| [meeting_type["name"], meeting_type["id"]] }
-    end,
-    },
+    end
+  },
 
   triggers: {
     new_booking: {
@@ -141,16 +141,16 @@
 
       input_fields: lambda do
         [
-          { name: "since", type: :timestamp, optional: false },
-          ]
+          { name: "since", type: :timestamp, optional: false }
+        ]
       end,
 
-      poll: lambda do |connection, input, last_created_since|
+      poll: lambda do |_connection, input, last_created_since|
         last_check = (last_created_since || input["since"]).
-          strftime("%Y%m%d%H%M%S")
+                      strftime("%Y%m%d%H%M%S")
         meetings = get("https://api.yarooms.com/sync/
                        #{last_check}")["data"]["data"]["new"]
-        next_created_since = meetings.last["date_created"] unless 
+        next_created_since = meetings.last["date_created"] unless
         meetings.blank?
 
         {
@@ -165,9 +165,9 @@
 
       output_fields: lambda do |object_definitions|
         object_definitions["meeting"]
-      end,
-      }
-    },
+      end
+    }
+  },
 
   actions: {
     create_user: {
@@ -185,7 +185,7 @@
             name: "time_format", type: :string, control_type: "select",
             pick_list: [
               ["24 hours", "m"],
-              ["am/pm", "a"],
+              ["am/pm", "a"]
             ]
           },
           {
