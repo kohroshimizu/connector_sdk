@@ -349,13 +349,9 @@
                         type: :array,
                         of: :object,
                         properties: [
-                          {
-                            name: "from",
+                          { name: "from",
                             type: :object,
-                            properties: [
-                              { name: "date", type: :date_time }
-                            ]
-                          },
+                            properties: [{ name: "date", type: :date_time }] },
                           { name: "to",
                             type: :object,
                             properties: [{ name: "date", type: :date_time }] }
