@@ -303,14 +303,16 @@
                       num_list = col.dig("ListOptions").map do |key, val|
                         [key, val.to_s]
                       end
-                    { name: col["Name"],
+                    {
+                      name: col["Name"],
                       type: "object",
                       label: col["Name"].labelize,
                       hint: col["Description"],
                       properties: [
                         { name: col["Name"],
                           type: "integer" }
-                      ] }
+                      ]
+                    }
                     when "LIST-DATE/TIME"
                       date_list = col.dig("ListOptions").map do |key, val|
                         [key, val]
