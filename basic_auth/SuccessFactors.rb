@@ -569,8 +569,8 @@
         }
         final_objects&.first || {}
       end
-
     },
+
     create_object: {
       description: "Create <span class='provider'>Object</span> in " \
       "<span class='provider'>Success Factors</span>",
@@ -644,8 +644,8 @@
         }
         final_objects&.first || {}
       end
-
     },
+
     update_object: {
       description: "Update <span class='provider'>Object</span> in " \
       "<span class='provider'> Success Factors</span>",
@@ -716,9 +716,7 @@
         }
         final_objects&.first || {}
       end
-
     }
-
   },
 
   triggers: {
