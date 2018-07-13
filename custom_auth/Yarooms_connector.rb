@@ -7,20 +7,20 @@
         control_type: "subdomain",
         url: "yarooms.com",
         optional: true,
-        },
+      },
 
       {
         name: "user",
         control_type: "email",
         optional: true
-        },
+      },
 
       {
         name: "password",
         control_type: "password",
         optional: true
-        },
-      ],
+      },
+    ],
 
     authorization: {
       type: "custom_auth",
@@ -31,22 +31,22 @@
             subdomain: connection["subdomain"],
             email: connection["user"],
             password: connection["password"])["data"]["token"]
-          }
+        }
       end,
 
       refresh_on: [
         /Invalid token/
-        ],
+      ],
 
       detect_on: [
         /Invalid credentials/, /Invalid token/
-        ],
+      ],
 
       apply: lambda do |connection|
         headers("X-Token": connection["authtoken"])
       end,
-      }
-    },
+    }
+  },
 
   object_definitions: {
     location: {
@@ -56,10 +56,10 @@
           { name: "name" },
           { name: "timezone" },
           { name: "created_at", type: :date_time },
-          { name: "updated_at", type: :date_time },
-          ]
+          { name: "updated_at", type: :date_time }
+        ]
       end
-      },
+    },
 
     meeting: {
       fields: lambda do
@@ -78,16 +78,19 @@
           { name: "checkin", type: :integer },
           { name: "created_at", type: :date_time },
           { name: "updated_at", type: :date_time },
-          { name: "recurrence", type: :object, properties: [
+          {
+            name: "recurrence", type: :object,
+            properties: [
             { name: "type" },
             { name: "first", type: :integer },
             { name: "exclude_weekends", type: :integer },
             { name: "weekdays", type: :array, of: :integer },
-            { name: "step" },
-            ]},
-          ]
+            { name: "step" }
+            ]
+          }
+        ]
       end
-      },
+    },
 
     user: {
       fields: lambda do
@@ -103,11 +106,11 @@
           { name: "fday" },
           { name: "suspended", type: :integer },
           { name: "created_at", type: :date_time },
-          { name: "updated_at", type: :date_time },
-          ]
+          { name: "updated_at", type: :date_time }
+        ]
       end
-      }
-    },
+    }
+  },
 
   test: lambda do
     get("https://api.yarooms.com/accounts")["data"]
@@ -156,7 +159,7 @@
         {
           events: meetings,
           next_page: next_created_since
-          }
+        }
       end,
 
       dedup: lambda do |meeting|
