@@ -317,14 +317,16 @@
                       date_list = col.dig("ListOptions").map do |key, val|
                         [key, val]
                       end
-                    { name: col["Name"],
+                    {
+                      name: col["Name"],
                       type: "object",
                       label: col["Name"].labelize,
                       hint: col["Description"],
                       properties: [
                         { name: col["Name"],
                           type: "date_time" }
-                      ] }
+                      ]
+                    }
                     else
                       { name: col["Name"],
                         type: "string",
@@ -592,3 +594,4 @@
     end
   }
 }
+
