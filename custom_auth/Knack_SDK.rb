@@ -276,14 +276,14 @@
                       { name: "filename" },
                       { name: "url" }]
                       }
-                  elsif f["type"] == 'link'
+                  elsif f["type"] == "link"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
                       { name: "url" }
                       ]
                     }
-                  elsif f["type"] == 'email'
+                  elsif f["type"] == "email"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
@@ -307,7 +307,9 @@
                           { name: "to",
                             type: :object,
                             properties: [{ name: "date", type: :date_time }] }
-                          ] }]
+                          ]
+                        }
+                      ]
                     }
                   elsif f["type"] == "date_time"
                     {
