@@ -176,34 +176,38 @@
           { name: "last_name", optional: false },
           { name: "email", optional: false, control_type: "email" },
           { name: "password", optional: false, control_type: "password" },
-          { name: "time_format", type: :string, control_type: "select",
+          {
+            name: "time_format", type: :string, control_type: "select",
             pick_list: [
               ["24 hours", "m"],
               ["am/pm", "a"],
-              ]
-            },
-          { name: "schedule_screen", type: :string, control_type: "select",
+            ]
+          },
+          {
+            name: "schedule_screen", type: :string, control_type: "select",
             pick_list: [
               ["default", ""],
               ["monthly", "monthly"],
               ["weekly", "weekly"],
               ["daily", "daily"],
-              ]
-            },
-          { name: "first_day", type: :integer, control_type: "select",
+            ]
+          },
+          {
+            name: "first_day", type: :integer, control_type: "select",
             pick_list: [
               ["default", ""],
               ["monday", 1],
-              ["sunday", 7],
-              ]
-            },
-          { name: "suspended", type: :integer, control_type: "select",
+              ["sunday", 7]
+            ]
+          },
+          {
+            name: "suspended", type: :integer, control_type: "select",
             pick_list: [
               ["yes", 1],
-              ["no", 0],
-              ]
-            },
-          ]
+              ["no", 0]
+            ]
+          },
+        ]
       end,
 
       execute: lambda do |_connection, input|
@@ -218,7 +222,7 @@
           schedule_screen: input["schedule_screen"],
           fday: input["first_day"].to_i,
           suspended: input["suspended"].to_i
-          )["data"]
+        )["data"]
       end,
 
       output_fields: lambda do |object_definitions|
@@ -234,7 +238,8 @@
           { name: "name", optional: false },
           { name: "start", type: :date_time, optional: false },
           { name: "end", type: :date_time, optional: false },
-          { name: "approved", type: :integer, control_type: "select",
+          {
+            name: "approved", type: :integer, control_type: "select",
             pick_list: [
               ["yes", 1],
               ["no", 0]
@@ -255,7 +260,7 @@
           status: input["approved"].to_i,
           description: input["description"],
           type_id: input["meeting_type"].to_i
-          )["data"]
+        )["data"]
       end,
 
       output_fields: lambda do |object_definitions|
