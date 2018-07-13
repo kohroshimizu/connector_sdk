@@ -247,13 +247,8 @@
           { name: "name", optional: false },
           { name: "start", type: :date_time, optional: false },
           { name: "end", type: :date_time, optional: false },
-          {
-            name: "approved", type: :integer, control_type: "select",
-            pick_list: [
-              ["yes", 1],
-              ["no", 0]
-            ]
-          },
+          { name: "approved", type: :integer, control_type: "select",
+            pick_list: [["yes", 1], ["no", 0]] },
           { name: "description" },
           { name: "meeting_type", control_type: "select",
             pick_list: "meeting_type", optional: false, type: :integer }
