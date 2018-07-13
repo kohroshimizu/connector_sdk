@@ -6,7 +6,7 @@
         name: "subdomain",
         control_type: "subdomain",
         url: "yarooms.com",
-        optional: true,
+        optional: true
       },
 
       {
@@ -19,7 +19,7 @@
         name: "password",
         control_type: "password",
         optional: true
-      },
+      }
     ],
 
     authorization: {
@@ -30,7 +30,8 @@
           authtoken: post("https://api.yarooms.com/auth").params(
             subdomain: connection["subdomain"],
             email: connection["user"],
-            password: connection["password"])["data"]["token"]
+            password: connection["password"]
+          )["data"]["token"]
         }
       end,
 
@@ -44,7 +45,7 @@
 
       apply: lambda do |connection|
         headers("X-Token": connection["authtoken"])
-      end,
+      end
     }
   },
 
@@ -81,11 +82,11 @@
           {
             name: "recurrence", type: :object,
             properties: [
-            { name: "type" },
-            { name: "first", type: :integer },
-            { name: "exclude_weekends", type: :integer },
-            { name: "weekdays", type: :array, of: :integer },
-            { name: "step" }
+              { name: "type" },
+              { name: "first", type: :integer },
+              { name: "exclude_weekends", type: :integer },
+              { name: "weekdays", type: :array, of: :integer },
+              { name: "step" }
             ]
           }
         ]
@@ -150,7 +151,7 @@
 
       poll: lambda do |_connection, input, last_created_since|
         last_check = (last_created_since || input["since"]).
-                      strftime("%Y%m%d%H%M%S")
+                     strftime("%Y%m%d%H%M%S")
         meetings = get("https://api.yarooms.com/sync/
                        #{last_check}")["data"]["data"]["new"]
         next_created_since = meetings.last["date_created"] unless
@@ -197,7 +198,7 @@
               ["default", ""],
               %w(monthly monthly),
               %w(weekly weekly),
-              %w(daily daily),
+              %w(daily daily)
             ]
           },
           {
