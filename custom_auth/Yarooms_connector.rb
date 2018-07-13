@@ -239,7 +239,7 @@
               ["yes", 1],
               ["no", 0]
             ]
-            }
+          },
           { name: "description" },
           { name: "meeting_type", control_type: "select",
             pick_list: "meeting_type", optional: false, type: :integer }
