@@ -219,10 +219,11 @@
             ).concat(
               get("https://api.knack.com/v1/objects/#{config['object']}/" \
                   "fields")['fields'].
-                  reject {|f| f["type"]=='signature'||
-                          f["type"]=='equation'||f["type"]=='user_roles' }.
+                  reject {|f| f["type"] == "signature" ||
+                          f["type"] == "equation" ||
+                          f["type"] == "user_roles" }.
                 map do |f|
-                  if f["type"] == 'address'
+                  if f["type"] == "address"
                     {
                       name: f["key"],
                       hint: "Provide longitude/latitude values if " \
@@ -230,16 +231,16 @@
                             "else provide remaining fields",
                       label: f["label"].labelize,
                       type: :object, properties: [
-                          { name: "longitude", type: :integer },
-                          { name: "latitude", type: :integer },
-                          { name: "zip" },
-                          { name: "state" },
-                          { name: "city" },
-                          { name: "street2" },
-                          { name: "street" }
+                        { name: "longitude", type: :integer },
+                        { name: "latitude", type: :integer },
+                        { name: "zip" },
+                        { name: "state" },
+                        { name: "city" },
+                        { name: "street2" },
+                        { name: "street" }
                       ]
                     }
-                  elsif f["type"] == 'name'
+                  elsif f["type"] == "name"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
@@ -249,25 +250,26 @@
                         { name: "last" }
                       ]
                     }
-                  elsif f["type"] == 'rating'
+                  elsif f["type"] == "rating"
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer, hint: "Values are 1 to 3" }
-                  elsif f["type"] == 'number'
+                  elsif f["type"] == "number"
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer }
-                  elsif f["type"] == 'auto_increment'
+                  elsif f["type"] == "auto_increment"
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer }
-                  elsif f["type"] == 'phone'
-                    { name: f["key"], label: f["label"].labelize,
+                  elsif f["type"] == "phone"
+                    {
+                      name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
                         { name: "phone_number" }
                       ]
                     }
-                  elsif f["type"] == 'rich_text'
+                  elsif f["type"] == "rich_text"
                     { name: f["key"], label: f["label"].labelize,
                       hint: "HTML can be used" }
-                  elsif f["type"] == 'image'
+                  elsif f["type"] == "image"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
@@ -275,7 +277,7 @@
                         { name: "url" }
                       ]
                     }
-                  elsif f["type"] == 'file'
+                  elsif f["type"] == "file"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
@@ -308,12 +310,12 @@
                           type: :array,
                           of: :object,
                           properties: [
-                          { name: "from",
-                            type: :object,
-                            properties: [{ name: "date", type: :date_time }] },
-                          { name: "to",
-                            type: :object,
-                            properties: [{ name: "date", type: :date_time }] }
+                            { name: "from",
+                              type: :object,
+                              properties: [{ name: "date", type: :date_time }] },
+                            { name: "to",
+                              type: :object,
+                              properties: [{ name: "date", type: :date_time }] }
                           ]
                         }
                       ]
