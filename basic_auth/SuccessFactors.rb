@@ -487,12 +487,15 @@
           "Schema", 1, "EntityType", 0, "Key", 0, "PropertyRef")[0]["@Name"]
     end
   },
+
   actions: {
 
     search_object: {
       description: 'Search <span class="provider">Objects</span> in " \
       "<span class="provider"> Success Factors</span>',
+
       subtitle: "Search Object's in Success Factors",
+
       config_fields: [
         { name: "object_name", control_type: :select,
           pick_list: :entity_set,
@@ -500,9 +503,11 @@
           hint: "Select object",
           optional: false }
       ],
+
       input_fields: lambda do |object_definitions|
         object_definitions["object_filter"]
       end,
+
       execute: lambda do |connection, input|
         object_name = input.delete("object_name")
         error("Provide at least one search criteria") if input.blank?
@@ -542,12 +547,14 @@
           objects: final_objects
         }
       end,
+
       output_fields: lambda do |object_definitions|
         [
           { name: "objects", type: "array", of: "object",
             properties: object_definitions["object_output"] }
         ]
       end,
+
       sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).
