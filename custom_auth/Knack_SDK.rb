@@ -209,10 +209,10 @@
                 { name: "approval_status" },
                 { name: "profile_keys_raw", type: :array,
                   of: :object, properties: [
-                  { name: "id" },
-                  { name: "identifier"}
+                    { name: "id" },
+                    { name: "identifier"}
                   ]}
-                ]
+              ]
             else
               []
             end
@@ -230,23 +230,25 @@
                             "else provide remaining fields",
                       label: f["label"].labelize,
                       type: :object, properties: [
-                        { name: "longitude", type: :integer },
-                        { name: "latitude", type: :integer },
-                        { name: "zip" },
-                        { name: "state" },
-                        { name: "city" },
-                        { name: "street2" },
-                        { name: "street" }
-                        ]
-                      }
+                          { name: "longitude", type: :integer },
+                          { name: "latitude", type: :integer },
+                          { name: "zip" },
+                          { name: "state" },
+                          { name: "city" },
+                          { name: "street2" },
+                          { name: "street" }
+                      ]
+                    }
                   elsif f["type"] == 'name'
-                    { name: f["key"], label: f["label"].labelize,
+                    {
+                      name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
-                      { name: "title" },
-                      { name: "first" },
-                      { name: "middle" },
-                      { name: "last" }]
-                      }
+                        { name: "title" },
+                        { name: "first" },
+                        { name: "middle" },
+                        { name: "last" }
+                      ]
+                    }
                   elsif f["type"] == 'rating'
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer, hint: "Values are 1 to 3" }
@@ -259,28 +261,33 @@
                   elsif f["type"] == 'phone'
                     { name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
-                      { name: "phone_number" }]
-                      }
+                        { name: "phone_number" }
+                      ]
+                    }
                   elsif f["type"] == 'rich_text'
                     { name: f["key"], label: f["label"].labelize,
                       hint: "HTML can be used" }
                   elsif f["type"] == 'image'
-                    { name: f["key"], label: f["label"].labelize,
+                    {
+                      name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
-                      { name: "filename" },
-                      { name: "url" }]
-                      }
+                        { name: "filename" },
+                        { name: "url" }
+                      ]
+                    }
                   elsif f["type"] == 'file'
-                    { name: f["key"], label: f["label"].labelize,
+                    {
+                      name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
-                      { name: "filename" },
-                      { name: "url" }]
-                      }
+                        { name: "filename" },
+                        { name: "url" }
+                      ]
+                    }
                   elsif f["type"] == "link"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
-                      { name: "url" }
+                        { name: "url" }
                       ]
                     }
                   elsif f["type"] == "email"
