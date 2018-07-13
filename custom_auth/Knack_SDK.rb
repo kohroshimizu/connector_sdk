@@ -8,23 +8,23 @@
         label: "Application ID",
         optional: false,
         hint: "Hover over gear icon, Click on API & Code -> get Application ID"
-        },
+      },
       {
         name: "api_key",
         label: "API Key",
         control_type: "password",
         optional: false,
         hint: "Hover over gear icon, Click on API & Code -> get API Key"
-        }
-      ],
+      }
+    ],
 
     authorization: {
       type: "custom_auth",
 
-      credentials: ->(connection) {
+      credentials: lambda do |connection|
         headers('X-Knack-Application-Id': connection["app_id"],
                 'X-Knack-REST-API-Key': connection["api_key"])
-      }
+      end
     }
   },
 
@@ -354,7 +354,8 @@
                             type: :object,
                             properties: [
                               { name: "date", type: :date_time }
-                            ] },
+                            ]
+                          },
                           { name: "to",
                             type: :object,
                             properties: [{ name: "date", type: :date_time }] }
@@ -442,8 +443,8 @@
                       sticky: true,
                       control_type: "select",
                       pick_list: [
-                        ["Ascending", "asc"],
-                        ["Deschendig", "desc"]
+                        %w(Ascending asc),
+                        %w(Deschendig desc)
                       ] }
                  ])
       end,
