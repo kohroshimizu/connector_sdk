@@ -146,9 +146,12 @@
       end,
 
       poll: lambda do |connection, input, last_created_since|
-        last_check = (last_created_since || input["since"]).strftime("%Y%m%d%H%M%S")
-        meetings = get("https://api.yarooms.com/sync/#{last_check}")["data"]["data"]["new"]
-        next_created_since = meetings.last["date_created"] unless meetings.blank?
+        last_check = (last_created_since || input["since"]).
+          strftime("%Y%m%d%H%M%S")
+        meetings = get("https://api.yarooms.com/sync/
+                       #{last_check}")["data"]["data"]["new"]
+        next_created_since = meetings.last["date_created"] unless 
+        meetings.blank?
 
         {
           events: meetings,
@@ -170,8 +173,10 @@
     create_user: {
       input_fields: lambda do
         [
-          { name: "location", control_type: "select", pick_list: "location", optional: false, type: :integer },
-          { name: "group", control_type: "select", pick_list: "group", optional: false, type: :integer},
+          { name: "location", control_type: "select", pick_list: "location",
+            optional: false, type: :integer },
+          { name: "group", control_type: "select", pick_list: "group",
+            optional: false, type: :integer },
           { name: "first_name", optional: false },
           { name: "last_name", optional: false },
           { name: "email", optional: false, control_type: "email" },
@@ -187,9 +192,9 @@
             name: "schedule_screen", type: :string, control_type: "select",
             pick_list: [
               ["default", ""],
-              ["monthly", "monthly"],
-              ["weekly", "weekly"],
-              ["daily", "daily"],
+              %w(monthly monthly),
+              %w(weekly weekly),
+              %w(daily daily),
             ]
           },
           {
@@ -206,7 +211,7 @@
               ["yes", 1],
               ["no", 0]
             ]
-          },
+          }
         ]
       end,
 
