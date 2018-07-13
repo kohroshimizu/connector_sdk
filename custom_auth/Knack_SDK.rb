@@ -23,19 +23,19 @@
 
       credentials: ->(connection) {
         headers('X-Knack-Application-Id': connection["app_id"],
-          'X-Knack-REST-API-Key': connection["api_key"])
-        }
+                'X-Knack-REST-API-Key': connection["api_key"])
       }
-    },
+    }
+  },
 
-  test: ->(connection) {
+  test: lambda do
     get("https://api.knack.com/v1/objects").dig("objects", 0)
-    },
+  end,
 
   object_definitions: {
 
     record_output: {
-      fields: lambda do |_connection, config| 
+      fields: lambda do |_connection, config|
         [
           { name: "id", label: "Record ID" }
         ].concat(
@@ -354,8 +354,7 @@
                             type: :object,
                             properties: [
                               { name: "date", type: :date_time }
-                            ]
-                          },
+                            ] },
                           { name: "to",
                             type: :object,
                             properties: [{ name: "date", type: :date_time }] }
