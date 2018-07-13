@@ -270,6 +270,7 @@
       output_fields: lambda do |object_definitions|
         object_definitions["meeting"]
       end
+
     }
   }
 }
