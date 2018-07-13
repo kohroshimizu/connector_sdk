@@ -55,16 +55,19 @@
             ).concat(
               get("https://api.knack.com/v1/objects/#{config['object']}/" \
                   "fields")["fields"].
-                  reject {|f| f["type"]=='signature'||f["type"]=='equation' }.
+                  reject { |f| f["type"] == "signature" ||
+                           f["type"] == "equation"
+                  }.
                 map do |f|
-                  if f["type"] == 'address'
+                  if f["type"] == "address"
                     {
                       name: f["key"],
                       hint: "Provide longitude/latitude values if address" \
                       " input type is longitude/latitude else " \
                       "provide remaining fields",
                       label: f["label"].labelize,
-                      type: :object, properties: [
+                      type: :object,
+                      properties: [
                         { name: "longitude", type: :integer },
                         { name: "latitude", type: :integer },
                         { name: "zip" },
@@ -72,9 +75,9 @@
                         { name: "city" },
                         { name: "street2" },
                         { name: "street" }
-                        ]
-                      }
-                  elsif f["type"] == 'name'
+                      ]
+                    }
+                  elsif f["type"] == "name"
                     {
                       name: f["key"], label: f["label"].labelize, type: :object,
                       properties: [
@@ -84,7 +87,7 @@
                         { name: "last" }
                       ]
                     }
-                  elsif f["type"] == 'connection'
+                  elsif f["type"] == "connection"
                     {
                       name: f["key"], label: f["label"].labelize, type: :array,
                       of: :object,
@@ -129,7 +132,7 @@
                         { name: "size", type: :integer }
                       ]
                     }
-                  elsif f["type"] == 'file'
+                  elsif f["type"] == "file"
                     {
                       name: f["key"], label: f["label"].labelize, type: :object,
                       properties: [
@@ -143,7 +146,7 @@
                         { name: "size", type: :integer }
                       ]
                     }
-                  elsif f["type"] == 'link'
+                  elsif f["type"] == "link"
                     {
                       name: f["key"], label: f["label"].labelize, type: :object,
                       properties: [
@@ -151,7 +154,7 @@
                         { name: "label" }
                       ]
                     }
-                  elsif f["type"] == 'email'
+                  elsif f["type"] == "email"
                     {
                       name: f["key"], label: f["label"].labelize, type: :object,
                       properties: [
@@ -159,14 +162,14 @@
                         { name: "label" }
                       ]
                     }
-                  elsif f["type"] == 'user_roles'
+                  elsif f["type"] == "user_roles"
                     {
                       name: f["key"], type: :array, label: f["label"].labelize,
                       properties: [
                         { name: f["key"], label: f["label"].labelize }
                       ]
                     }
-                  elsif f["type"] == 'timer'
+                  elsif f["type"] == "timer"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object,
@@ -251,8 +254,9 @@
           get("https://api.knack.com/v1/objects/#{config['object']}/" \
               "fields")["fields"].
               reject { |f| f["type"] == "signature" ||
-                      f["type"] == "equation" ||
-                      f["type"] == "user_roles" }.
+                       f["type"] == "equation" ||
+                       f["type"] == "user_roles"
+              }.
               map do |f|
                 if f["type"] == "address"
                   {
