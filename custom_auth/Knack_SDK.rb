@@ -287,7 +287,7 @@
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object, properties: [
-                      { name: "email" }
+                        { name: "email" }
                       ]
                     }
                   elsif f["type"] == "timer"
@@ -296,22 +296,24 @@
                       label: f["label"].labelize,
                       type: :object,
                       properties: [
-                      { name: "times",
-                        type: :array,
-                        of: :object,
-                        properties: [
-                        { name: "from",
-                          type: :object,
-                          properties: [{ name: "date", type: :date_time }] },
-                        { name: "to",
-                          type: :object,
-                          properties: [{ name: "date", type: :date_time }] }] }]
+                        {
+                          name: "times",
+                          type: :array,
+                          of: :object,
+                          properties: [
+                          { name: "from",
+                            type: :object,
+                            properties: [{ name: "date", type: :date_time }] },
+                          { name: "to",
+                            type: :object,
+                            properties: [{ name: "date", type: :date_time }] }
+                          ] }]
                     }
                   elsif f["type"] == "date_time"
                     {
                       name: f["key"], label: f["label"].labelize,
                       type: :object,
-                      properties:[{ name: "date", type: :date_time }]
+                      properties: [{ name: "date", type: :date_time }]
                     }
                   else
                     { name: f["key"], label: f["label"].labelize,
