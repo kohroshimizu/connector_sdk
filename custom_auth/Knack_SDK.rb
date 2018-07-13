@@ -89,16 +89,16 @@
                       { name: "identifier" }
                       ]
                       }
-                  elsif f["type"] == 'rating'
+                  elsif f["type"] == "rating"
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer, hint: "Values are 1 to 3" }
-                  elsif f["type"] == 'number'
+                  elsif f["type"] == "number"
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer }
-                  elsif f["type"] == 'auto_increment'
+                  elsif f["type"] == "auto_increment"
                     { name: f["key"], label: f["label"].labelize,
                       type: :integer }
-                  elsif f["type"] == 'phone'
+                  elsif f["type"] == "phone"
                     { name: f["key"], label: f["label"].labelize, type: :object,
                       properties: [
                       { name: "formatted" },
@@ -106,10 +106,10 @@
                       { name: "number" },
                       { name: "area" }]
                       }
-                  elsif f["type"] == 'rich_text'
+                  elsif f["type"] == "rich_text"
                     { name: f["key"], label: f["label"].labelize,
                       hint: "HTML can be used" }
-                  elsif f["type"] == 'image'
+                  elsif f["type"] == "image"
                     { name: f["key"], label: f["label"].labelize, type: :object,
                       properties: [
                       { name: "id" },
@@ -194,145 +194,150 @@
                     { name: f["key"], label: f["label"].labelize,
                       type: f["type"] }
                   end
-                end)
-        }
-      },
-
-    record_search: {
-      fields: ->(_connection, config) {
-        [
-          { name: "id", label: 'Record ID' }
-          ].concat(
-            if config["is_user_role"] == true
-              [
-                { name: "account_status" },
-                { name: "approval_status" },
-                { name: "profile_keys_raw", type: :array,
-                  of: :object, properties: [
-                    { name: "id" },
-                    { name: "identifier"}
-                  ]}
-              ]
-            else
-              []
-            end
-            ).concat(
-              get("https://api.knack.com/v1/objects/#{config['object']}/" \
-                  "fields")['fields'].
-                  reject {|f| f["type"] == "signature" ||
-                          f["type"] == "equation" ||
-                          f["type"] == "user_roles" }.
-                map do |f|
-                  if f["type"] == "address"
-                    {
-                      name: f["key"],
-                      hint: "Provide longitude/latitude values if " \
-                            "address input type is longitude/latitude " \
-                            "else provide remaining fields",
-                      label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "longitude", type: :integer },
-                        { name: "latitude", type: :integer },
-                        { name: "zip" },
-                        { name: "state" },
-                        { name: "city" },
-                        { name: "street2" },
-                        { name: "street" }
-                      ]
-                    }
-                  elsif f["type"] == "name"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "title" },
-                        { name: "first" },
-                        { name: "middle" },
-                        { name: "last" }
-                      ]
-                    }
-                  elsif f["type"] == "rating"
-                    { name: f["key"], label: f["label"].labelize,
-                      type: :integer, hint: "Values are 1 to 3" }
-                  elsif f["type"] == "number"
-                    { name: f["key"], label: f["label"].labelize,
-                      type: :integer }
-                  elsif f["type"] == "auto_increment"
-                    { name: f["key"], label: f["label"].labelize,
-                      type: :integer }
-                  elsif f["type"] == "phone"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "phone_number" }
-                      ]
-                    }
-                  elsif f["type"] == "rich_text"
-                    { name: f["key"], label: f["label"].labelize,
-                      hint: "HTML can be used" }
-                  elsif f["type"] == "image"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "filename" },
-                        { name: "url" }
-                      ]
-                    }
-                  elsif f["type"] == "file"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "filename" },
-                        { name: "url" }
-                      ]
-                    }
-                  elsif f["type"] == "link"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "url" }
-                      ]
-                    }
-                  elsif f["type"] == "email"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object, properties: [
-                        { name: "email" }
-                      ]
-                    }
-                  elsif f["type"] == "timer"
-                    {
-                      name: f["key"],
-                      label: f["label"].labelize,
-                      type: :object,
-                      properties: [
-                        {
-                          name: "times",
-                          type: :array,
-                          of: :object,
-                          properties: [
-                            { name: "from",
-                              type: :object,
-                              properties: [{ name: "date", type: :date_time }] },
-                            { name: "to",
-                              type: :object,
-                              properties: [{ name: "date", type: :date_time }] }
-                          ]
-                        }
-                      ]
-                    }
-                  elsif f["type"] == "date_time"
-                    {
-                      name: f["key"], label: f["label"].labelize,
-                      type: :object,
-                      properties: [{ name: "date", type: :date_time }]
-                    }
-                  else
-                    { name: f["key"], label: f["label"].labelize,
-                      type: f["type"] }
-                  end
                 end
             )
       }
+    },
+
+    record_search: {
+      fields: lambda do |_connection, config|
+        [
+          { name: "id", label: "Record ID" }
+        ].concat(
+          if config["is_user_role"] == true
+            [
+              { name: "account_status" },
+              { name: "approval_status" },
+              { name: "profile_keys_raw", type: :array,
+                of: :object, properties: [
+                  { name: "id" },
+                  { name: "identifier" }
+                ] }
+            ]
+          else
+            []
+          end
+        ).concat(
+          get("https://api.knack.com/v1/objects/#{config['object']}/" \
+              "fields")["fields"].
+              reject {|f| f["type"] == "signature" ||
+                      f["type"] == "equation" ||
+                      f["type"] == "user_roles"
+                      }.
+              map do |f|
+                if f["type"] == "address"
+                  {
+                    name: f["key"],
+                    hint: "Provide longitude/latitude values if " \
+                          "address input type is longitude/latitude " \
+                          "else provide remaining fields",
+                    label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "longitude", type: :integer },
+                      { name: "latitude", type: :integer },
+                      { name: "zip" },
+                      { name: "state" },
+                      { name: "city" },
+                      { name: "street2" },
+                      { name: "street" }
+                    ]
+                  }
+                elsif f["type"] == "name"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "title" },
+                      { name: "first" },
+                      { name: "middle" },
+                      { name: "last" }
+                    ]
+                  }
+                elsif f["type"] == "rating"
+                  { name: f["key"], label: f["label"].labelize,
+                    type: :integer, hint: "Values are 1 to 3" }
+                elsif f["type"] == "number"
+                  { name: f["key"], label: f["label"].labelize,
+                    type: :integer }
+                elsif f["type"] == "auto_increment"
+                  { name: f["key"], label: f["label"].labelize,
+                    type: :integer }
+                elsif f["type"] == "phone"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "phone_number" }
+                    ]
+                  }
+                elsif f["type"] == "rich_text"
+                  { name: f["key"], label: f["label"].labelize,
+                    hint: "HTML can be used" }
+                elsif f["type"] == "image"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "filename" },
+                      { name: "url" }
+                    ]
+                  }
+                elsif f["type"] == "file"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "filename" },
+                      { name: "url" }
+                    ]
+                  }
+                elsif f["type"] == "link"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "url" }
+                    ]
+                  }
+                elsif f["type"] == "email"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object, properties: [
+                      { name: "email" }
+                    ]
+                  }
+                elsif f["type"] == "timer"
+                  {
+                    name: f["key"],
+                    label: f["label"].labelize,
+                    type: :object,
+                    properties: [
+                      {
+                        name: "times",
+                        type: :array,
+                        of: :object,
+                        properties: [
+                          { name: "from",
+                            type: :object,
+                            properties: [
+                              { name: "date", type: :date_time }
+                            ]
+                          },
+                          { name: "to",
+                            type: :object,
+                            properties: [{ name: "date", type: :date_time }] }
+                        ]
+                      }
+                    ]
+                  }
+                elsif f["type"] == "date_time"
+                  {
+                    name: f["key"], label: f["label"].labelize,
+                    type: :object,
+                    properties: [{ name: "date", type: :date_time }]
+                  }
+                else
+                  { name: f["key"], label: f["label"].labelize,
+                    type: f["type"] }
+                end
+              end
+        )
+      end
     }
   },
   methods: {
