@@ -24,8 +24,8 @@
         label: "API endpoint",
         optional: false,
         hint: "Provide the endpoint of the API excluding /odata/v2 " \
-        "e.g. for location USA, Arizona, Chandler " \
-        "- <code>https://api4.successfactors.com</code>"
+          "e.g. for location USA, Arizona, Chandler " \
+          "- <code>https://api4.successfactors.com</code>"
       }
     ],
 
@@ -44,463 +44,465 @@
   },
 
   object_definitions: {
-
     object_output: {
-      fields: lambda do |connection, config|
+      fields: lambda do |_connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
-          response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
-          select{ |field| field["@visible"] == "true" }.
-          map do |o|
-            case o["@Type"]
-            when "Edm.String"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Boolean"
-              { name: o["@Name"], type: "boolean",
-                control_type: "checkbox",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Byte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.DateTime"
-              { name: o["@Name"], type: "date_time",
-                control_type: "date_time",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Decimal"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Double"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Single"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Guid"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int16"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int32"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int64"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.SByte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Time"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.DateTimeOffset"
-              { name: o["@Name"], type: "date_time",
-                control_type: "date_time",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            else
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            end
-          end
+                  response_format_xml.
+                  dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1,
+                    "EntityType", 0, "Property").
+                  select { |field| field["@visible"] == "true" }.
+                  map do |o|
+                    case o["@Type"]
+                    when "Edm.String"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Boolean"
+                      { name: o["@Name"], type: "boolean",
+                        control_type: "checkbox",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Byte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTime"
+                      { name: o["@Name"], type: "date_time",
+                        control_type: "date_time",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Decimal"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Double"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Single"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Guid"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int16"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int32"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int64"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.SByte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Time"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTimeOffset"
+                      { name: o["@Name"], type: "date_time",
+                        control_type: "date_time",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    else
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    end
+                  end
         columns
       end
     },
 
     object_create: {
-      fields: lambda do |connection, config|
+      fields: lambda do |_connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
-          response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
-          select{ |field| field["@creatable"] == "true" }.
-          map do |o|
-            case o["@Type"]
-            when "Edm.String"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Boolean"
-              { name: o["@Name"], type: "boolean",
-                control_type: "checkbox",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Byte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.DateTime"
-              { name: o["@Name"], type: "date_time",
-                control_type: "date_time",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Decimal"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Double"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Single"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Guid"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int16"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int32"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int64"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.SByte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Time"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.DateTimeOffset"
-              { name: o["@Name"], type: "timestamp",
-                control_type: "date_time",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            else
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            end
-          end
+                  response_format_xml.
+                  dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1,
+                    "EntityType", 0, "Property").
+                  select { |field| field["@creatable"] == "true" }.
+                  map do |o|
+                    case o["@Type"]
+                    when "Edm.String"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Boolean"
+                      { name: o["@Name"], type: "boolean",
+                        control_type: "checkbox",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Byte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTime"
+                      { name: o["@Name"], type: "date_time",
+                        control_type: "date_time",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Decimal"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Double"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Single"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Guid"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int16"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int32"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int64"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.SByte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Time"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTimeOffset"
+                      { name: o["@Name"], type: "timestamp",
+                        control_type: "date_time",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    else
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    end
+                  end
         columns
       end
     },
 
     object_update: {
-      fields: lambda do |connection, config|
+      fields: lambda do |_connection, config|
         key_column = call(:object_key, {object_name: config['object_name']})
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
-          response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
-          select{ |field| field["@updatable"] == "true" }.
-          map do |o|
-            optional =
-            o["@Name"] == key_column ? false : o["@required"].include?("false")
-            case o["@Type"]
-            when "Edm.String"
-              { name: o["@Name"], type: "string",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Boolean"
-              { name: o["@Name"], type: "boolean",
-                control_type: "checkbox",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Byte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.DateTime"
-              { name: o["@Name"], type: "date_time",
-                control_type: "date_time",
-                optional: optional,
-                label:  o["@label"].labelize}
-            when "Edm.Decimal"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Double"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Single"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Guid"
-              { name: o["@Name"], type: "string",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Int16"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Int32"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Int64"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.SByte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.Time"
-              { name: o["@Name"], type: "string",
-                optional: optional,
-                label:  o["@label"].labelize }
-            when "Edm.DateTimeOffset"
-              { name: o["@Name"], type: "timestamp",
-                control_type: "date_time",
-                optional: optional,
-                label:  o["@label"].labelize }
-            else
-              { name: o["@Name"], type: "string",
-                optional: optional,
-                label:  o["@label"].labelize }
-            end
-          end
+                  response_format_xml.
+                  dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1,
+                    "EntityType", 0, "Property").
+                  select{ |field| field["@updatable"] == "true" }.
+                  map do |o|
+                    optional =
+                      if o["@Name"] == key_column
+                        false
+                      else
+                        o["@required"].include?("false")
+                      end
+                    case o["@Type"]
+                    when "Edm.String"
+                      { name: o["@Name"], type: "string",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Boolean"
+                      { name: o["@Name"], type: "boolean",
+                        control_type: "checkbox",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Byte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTime"
+                      { name: o["@Name"], type: "date_time",
+                        control_type: "date_time",
+                        optional: optional,
+                        label:  o["@label"].labelize}
+                    when "Edm.Decimal"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Double"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Single"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Guid"
+                      { name: o["@Name"], type: "string",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Int16"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Int32"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Int64"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.SByte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.Time"
+                      { name: o["@Name"], type: "string",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTimeOffset"
+                      { name: o["@Name"], type: "timestamp",
+                        control_type: "date_time",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    else
+                      { name: o["@Name"], type: "string",
+                        optional: optional,
+                        label:  o["@label"].labelize }
+                    end
+                  end
         columns
       end
     },
 
     object_upsert: {
-      fields: lambda do |connection, config|
+      fields: lambda do |_connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
-          response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
-          select{ |field| field["@upsertable"] == "true" }.
-          map do |o|
-            case o["@Type"]
-            when "Edm.String"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Boolean"
-              { name: o["@Name"], type: "boolean",
-                control_type: "checkbox",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Byte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.DateTime"
-              { name: o["@Name"], type: "date_time",
-                control_type: "date_time",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Decimal"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Double"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Single"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Guid"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int16"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int32"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Int64"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.SByte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.Time"
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            when "Edm.DateTimeOffset"
-              { name: o["@Name"], type: "timestamp",
-                control_type: "date_time",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            else
-              { name: o["@Name"], type: "string",
-                optional: o["@required"].include?("false"),
-                label:  o["@label"].labelize }
-            end
-          end
+                  response_format_xml.
+                  dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1,
+                    "EntityType", 0, "Property").
+                  select { |field| field["@upsertable"] == "true" }.
+                  map do |o|
+                    case o["@Type"]
+                    when "Edm.String"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Boolean"
+                      { name: o["@Name"], type: "boolean",
+                        control_type: "checkbox",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Byte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTime"
+                      { name: o["@Name"], type: "date_time",
+                        control_type: "date_time",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Decimal"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Double"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Single"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Guid"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int16"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int32"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Int64"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.SByte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.Time"
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTimeOffset"
+                      { name: o["@Name"], type: "timestamp",
+                        control_type: "date_time",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    else
+                      { name: o["@Name"], type: "string",
+                        optional: o["@required"].include?("false"),
+                        label:  o["@label"].labelize }
+                    end
+                  end
         columns
       end
     },
 
     object_filter: {
-      fields: lambda do |connection, config|
+      fields: lambda do |_connection, config|
         columns = get("/odata/v2/#{config['object_name']}/$metadata").
-          response_format_xml.
-          dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1, "EntityType",
-              0, "Property").
-          select{ |field| field["@filterable"] == "true" }.
-          map do |o|
-            case o["@Type"]
-            when "Edm.String"
-              { name: o["@Name"], type: "string",
-                label:  o["@label"].labelize }
-            when "Edm.Boolean"
-              { name: o["@Name"], type: "boolean",
-                control_type: "checkbox",
-                label:  o["@label"].labelize }
-            when "Edm.Byte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.DateTime"
-              { name: o["@Name"], type: "date_time",
-                control_type: "date_time",
-                parse_output: "",
-                label:  o["@label"].labelize }
-            when "Edm.Decimal"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.Double"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.Single"
-              { name: o["@Name"], type: "number",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.Guid"
-              { name: o["@Name"], type: "string",
-                label:  o["@label"].labelize }
-            when "Edm.Int16"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.Int32"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.Int64"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.SByte"
-              { name: o["@Name"], type: "integer",
-                control_type: "number",
-                label:  o["@label"].labelize }
-            when "Edm.Time"
-              { name: o["@Name"], type: "string",
-                label:  o["@label"].labelize }
-            when "Edm.DateTimeOffset"
-              { name: o["@Name"], type: "timestamp",
-                control_type: "date_time",
-                label:  o["@label"].labelize }
-            else
-              { name: o["@Name"], type: "string",
-                label:  o["@label"].labelize }
-            end
-          end
+                  response_format_xml.
+                  dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1,
+                    "EntityType", 0, "Property").
+                  select { |field| field["@filterable"] == "true" }.
+                  map do |o|
+                    case o["@Type"]
+                    when "Edm.String"
+                      { name: o["@Name"], type: "string",
+                        label:  o["@label"].labelize }
+                    when "Edm.Boolean"
+                      { name: o["@Name"], type: "boolean",
+                        control_type: "checkbox",
+                        label:  o["@label"].labelize }
+                    when "Edm.Byte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTime"
+                      { name: o["@Name"], type: "date_time",
+                        control_type: "date_time",
+                        parse_output: "",
+                        label:  o["@label"].labelize }
+                    when "Edm.Decimal"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.Double"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.Single"
+                      { name: o["@Name"], type: "number",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.Guid"
+                      { name: o["@Name"], type: "string",
+                        label:  o["@label"].labelize }
+                    when "Edm.Int16"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.Int32"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.Int64"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.SByte"
+                      { name: o["@Name"], type: "integer",
+                        control_type: "number",
+                        label:  o["@label"].labelize }
+                    when "Edm.Time"
+                      { name: o["@Name"], type: "string",
+                        label:  o["@label"].labelize }
+                    when "Edm.DateTimeOffset"
+                      { name: o["@Name"], type: "timestamp",
+                        control_type: "date_time",
+                        label:  o["@label"].labelize }
+                    else
+                      { name: o["@Name"], type: "string",
+                        label:  o["@label"].labelize }
+                    end
+                  end
         columns
       end
     }
-
   },
 
   test: lambda { |_connection|
     get("/odata/v2/User?$top=1")
   },
-  methods: {
 
+  methods: {
     date_fields: lambda do |input|
       get("/odata/v2/" + input[:object_name] + "/$metadata").
         response_format_xml.
         dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema",
          1, "EntityType", 0, "Property").
-        select{ |field| ["Edm.DateTime",
-         "Edm.DateTimeOffset"].include?(field["@Type"]) }.
+        select do |field|
+          ["Edm.DateTime", "Edm.DateTimeOffset"].include?(field["@Type"])
+        end.
         map { |e| e["@Name"] }
     end,
 
     object_key: lambda do |input|
       get("/odata/v2/" + input[:object_name]  + "/$metadata").
-        response_format_xml.dig("edmx:Edmx", 0, "edmx:DataServices", 0,
-          "Schema", 1, "EntityType", 0, "Key", 0, "PropertyRef")[0]["@Name"]
+        response_format_xml.
+        dig("edmx:Edmx", 0, "edmx:DataServices", 0, "Schema", 1,
+          "EntityType", 0, "Key", 0, "PropertyRef")[0]["@Name"]
     end
   },
 
   actions: {
-
     search_object: {
-      description: 'Search <span class="provider">Objects</span> in " \
-      "<span class="provider"> Success Factors</span>',
-
-      subtitle: "Search Object's in Success Factors",
+      description: "Search <span class='provider'>objects</span> in " \
+        "<span class='provider'>SuccessFactors</span>",
+      subtitle: "Search objects",
 
       config_fields: [
         { name: "object_name", control_type: :select,
           pick_list: :entity_set,
           label: "Object",
-          hint: "Select object",
+          hint: "Select object to search for",
           optional: false }
       ],
 
@@ -527,7 +529,7 @@
                   headers("Accept": "application/json",
                           "Content-Type": "application/json").
                   dig("d", "results")
-        final_objects = objects.map { |obj|
+        final_objects = objects.map do |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -541,8 +543,7 @@
               { key => value }
             end
           end.inject(:merge)
-        }
-        final_objects
+        end
         {
           objects: final_objects
         }
@@ -558,8 +559,9 @@
       sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).
-                  params("$top": 1).dig("d", "results")
-        final_objects = objects.map { |obj|
+                  params("$top": 1).
+                  dig("d", "results")
+        final_objects = objects.map do |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -568,20 +570,20 @@
               else
                 { key => value }
               end
-
             else
               { key => value }
             end
           end.inject(:merge)
-        }
+        end
         final_objects&.first || {}
       end
     },
 
     create_object: {
       description: "Create <span class='provider'>Object</span> in " \
-      "<span class='provider'>Success Factors</span>",
-      subtitle: "Create object in Success Factors",
+      "<span class='provider'>SuccessFactors</span>",
+      subtitle: "Create object in SuccessFactors",
+
       config_fields: [
         {
           name: "object_name", label: "Object",
@@ -591,9 +593,11 @@
           optional: false
         }
       ],
+
       input_fields: lambda do |object_definitions|
         object_definitions["object_create"]
       end,
+
       execute: lambda do |_connection, input|
         object_name = input.delete("object_name")
         # set empployee id on User creation
@@ -627,14 +631,17 @@
             error("#{message}: #{body}")
           end
       end,
+
       output_fields: lambda do |object_definitions|
         object_definitions["object_output"]
       end,
+
       sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
-        objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
+        objects = get("/odata/v2/" + input["object_name"]).
+                  params("$top": 1).
                   dig("d", "results")
-        final_objects = objects.map { |obj|
+        final_objects = objects.map do |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -643,21 +650,21 @@
               else
                 { key => value }
               end
-
             else
               { key => value }
             end
           end.inject(:merge)
-        }
+        end
         final_objects&.first || {}
       end
     },
 
     update_object: {
-      description: "Update <span class='provider'>Object</span> in " \
-      "<span class='provider'> Success Factors</span>",
-      subtitle: "Update Object in Success Factors",
+      description: "Update <span class='provider'>object</span> in " \
+        "<span class='provider'>SuccessFactors</span>",
+      subtitle: "Update object in SuccessFactors",
       help: "Merges only data fields which are passed in input",
+
       config_fields: [
         {
           name: "object_name", label: "Object",
@@ -667,9 +674,11 @@
           optional: false
         }
       ],
+
       input_fields: lambda do |object_definitions|
         object_definitions["object_update"]
       end,
+
       execute: lambda do |_connection, input|
         object_name = input.delete("object_name")
         key_column = call(:object_key, object_name: object_name)
@@ -699,14 +708,17 @@
             error("#{message}: #{body}")
           end
       end,
+
       output_fields: lambda do |object_definitions|
         object_definitions["object_output"]
       end,
+
       sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).
-                  params("$top": 1).dig("d", "results")
-        final_objects = objects.map { |obj|
+                  params("$top": 1).
+                  dig("d", "results")
+        final_objects = objects.map do |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -715,25 +727,23 @@
               else
                 { key => value }
               end
-
             else
               { key => value }
             end
           end.inject(:merge)
-        }
+        end
         final_objects&.first || {}
       end
     }
   },
 
   triggers: {
-
     new_updated_object: {
-      description: "New or Updated <span class='provider'>Object</span> in " \
-      "<span class='provider'>Success Factors</span>",
-      title_hint: "New or Updated object in Success Factors",
-      help: "Each object created or updated processed " \
-      "as a single trigger event.",
+      title: "New/Updated object",
+      description: "New/Updated <span class='provider'>object</span> in " \
+        "<span class='provider'>SuccessFactors</span>",
+      subtitle: "New/Updated object",
+
       config_fields: [
         { name: "object_name", control_type: :select,
           pick_list: "entity_set",
@@ -742,13 +752,14 @@
           optional: false,
           toggle_hint: "Select Entityset",
           toggle_field:
-          { name: "object_name",
-            type: "string",
-            control_type: "text",
-            label: "Object API name",
-            toggle_hint: "Use Entityset name",
-            hint: "EntitySet Internal name" } }
+            { name: "object_name",
+              type: "string",
+              control_type: "text",
+              label: "Object API name",
+              toggle_hint: "Use Entityset name",
+              hint: "EntitySet Internal name" } }
       ],
+
       input_fields: lambda do
         [
           { name: "since", type: "date_time",
@@ -757,6 +768,7 @@
             hint: "Fetch objects from specified time" }
         ]
       end,
+
       poll: lambda do |_connection, input, last_updated_since|
         object_name = input.delete("object_name")
         key_column = call(:object_key, object_name: object_name)
@@ -770,8 +782,9 @@
                   headers("Accept": "application/json",
                           "Content-Type": "application/json").
                   dig("d", "results")
+
         # add custom column for dedup, timestamp conversion
-        final_objects = objects.map { |obj|
+        final_objects = objects.map do |obj|
           obj["object_id"] = obj[key_column] + "-" +
                              obj["lastModifiedDateTime"].scan(/\d+/)[0].to_s
           obj.map do |key, value|
@@ -786,27 +799,30 @@
               { key => value }
             end
           end.inject(:merge)
-        }
+        end
         last_updated_since = final_objects.last["lastModifiedDateTime"] unless
         final_objects.size == 0
-        final_objects
+
         {
           events: final_objects,
           next_poll: last_updated_since,
           can_poll_more: objects.size > 0
         }
       end,
+
       dedup: lambda do |object|
         object["object_id"]
       end,
+
       output_fields: lambda do |object_defintions|
         object_defintions["object_output"]
       end,
+
       sample_output: lambda do |_connection, input|
         date_fields = call(:date_fields, object_name: input["object_name"])
         objects = get("/odata/v2/" + input["object_name"]).params("$top": 1).
                   dig("d", "results")
-        final_objects = objects.map { |obj|
+        final_objects = objects.map do |obj|
           obj.map do |key, value|
             if date_fields.include?(key)
               if !value.blank?
@@ -820,7 +836,7 @@
               { key => value }
             end
           end.inject(:merge)
-        }
+        end
         final_objects&.first || {}
       end
     }
