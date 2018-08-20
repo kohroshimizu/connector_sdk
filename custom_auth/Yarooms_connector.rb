@@ -31,7 +31,7 @@
             subdomain: connection["subdomain"],
             email: connection["user"],
             password: connection["password"]
-          )["data"]["token"]
+          ).dig("data", "token")
         }
       end,
 
@@ -120,27 +120,30 @@
   pick_lists: {
     location: lambda do
       get("https://api.yarooms.com/locations")["data"]["list"].
-        map { |location| [location["name"], location["id"]] }
+        pluck("name", "id")
     end,
 
     group: lambda do
       get("https://api.yarooms.com/groups")["data"]["list"].
-        map { |group| [group["name"], group["id"]] }
+        pluck("name", "id")
     end,
 
     room: lambda do
       get("https://api.yarooms.com/rooms")["data"]["list"].
-        map { |room| [room["name"], room["id"]] }
+        pluck("name", "id")
     end,
 
     meeting_type: lambda do
       get("https://api.yarooms.com/types")["data"]["list"].
-        map { |meeting_type| [meeting_type["name"], meeting_type["id"]] }
+        pluck("name", "id")
     end
   },
 
   triggers: {
     new_booking: {
+      description: "New <span class='provider'>booking</span> in " \
+        "<span class='provider'>Yarooms</span>",
+
       type: :paging_desc,
 
       input_fields: lambda do
@@ -153,7 +156,7 @@
         last_check = (last_created_since || input["since"]).
                      strftime("%Y%m%d%H%M%S")
         meetings = get("https://api.yarooms.com/sync/
-                       #{last_check}")["data"]["data"]["new"]
+                       #{last_check}").dig("data", "data", "new")
         next_created_since = meetings.last["date_created"] unless
         meetings.blank?
 
@@ -175,6 +178,9 @@
 
   actions: {
     create_user: {
+      description: "Create <span class='provider'>user</span> in " \
+        "<span class='provider'>Yarooms</span>",
+
       input_fields: lambda do
         [
           { name: "location", control_type: "select", pick_list: "location",
@@ -220,18 +226,11 @@
       end,
 
       execute: lambda do |_connection, input|
-        post("https://api.yarooms.com/accounts").params(
-          location_id: input["location"].to_i,
-          group_id: input["group"].to_i,
-          first_name: input["first_name"],
-          last_name: input["last_name"],
-          email: input["email"],
-          password: input["password"],
-          time_format: input["time_format"],
-          schedule_screen: input["schedule_screen"],
-          fday: input["first_day"].to_i,
-          suspended: input["suspended"].to_i
-        )["data"]
+        input["location"] = input["location"].to_i
+        input["group"] = input["group"].to_i
+        input["first_day"] = input["first_day"].to_i
+        input["suspended"] = input["suspended"].to_i
+        post("https://api.yarooms.com/accounts", input)["data"]
       end,
 
       output_fields: lambda do |object_definitions|
@@ -240,6 +239,9 @@
     },
 
     create_booking: {
+      description: "Create <span class='provider'>booking</span> in " \
+        "<span class='provider'>Yarooms</span>",
+
       input_fields: lambda do
         [
           { name: "room", control_type: "select", pick_list: "room",
@@ -270,7 +272,6 @@
       output_fields: lambda do |object_definitions|
         object_definitions["meeting"]
       end
-
     }
   }
 }
