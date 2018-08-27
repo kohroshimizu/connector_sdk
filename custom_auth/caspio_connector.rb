@@ -201,7 +201,7 @@
 
     output_columns: {
       fields: lambda do |_connection, config|
-        columns = get("/rest/v1/tables/#{config['table_name']}/columns").
+        get("/rest/v1/tables/#{config['table_name']}/columns").
                   dig("Result").
                   map do |col|
                     case col["Type"]
@@ -300,7 +300,7 @@
                         ],
                         hint: col["Description"] }
                     when "LIST-NUMBER"
-                      num_list = col.dig("ListOptions").map do |key, val|
+                      col.dig("ListOptions").map do |key, val|
                         [key, val.to_s]
                       end
                       { name: col["Name"],
@@ -309,7 +309,7 @@
                         hint: col["Description"],
                         properties: [{ name: col["Name"], type: "integer" }] }
                     when "LIST-DATE/TIME"
-                      date_list = col.dig("ListOptions").map do |key, val|
+                      col.dig("ListOptions").map do |key, val|
                         [key, val]
                       end
                       {
@@ -335,8 +335,7 @@
 
     search_columns: {
       fields: lambda do |_connection, config|
-        columns = get("/rest/v1/tables/#{config['table_name']}/columns").
-                  dig("Result").
+        get("/rest/v1/tables/#{config['table_name']}/columns").dig("Result").
                   select { |c|
                     %w(INTEGER STRING NUMBER GUID).
                       include?(c["Type"])
