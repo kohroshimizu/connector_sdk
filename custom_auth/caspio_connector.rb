@@ -201,7 +201,7 @@
 
     output_columns: {
       fields: lambda do |_connection, config|
-        get("/rest/v1/tables/#{config['table_name']}/columns").
+         get("/rest/v1/tables/#{config['table_name']}/columns").
                   dig("Result").
                   map do |col|
                     case col["Type"]
