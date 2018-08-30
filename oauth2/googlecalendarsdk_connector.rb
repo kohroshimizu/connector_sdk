@@ -28,6 +28,7 @@
           "https://www.googleapis.com/auth/calendar",
           "https://www.googleapis.com/auth/calendar.readonly"
         ].join(" ")
+
         "https://accounts.google.com/o/oauth2/auth?client_id=" \
         "#{connection['client_id']}&response_type=code&scope=#{scopes}" \
         "&access_type=offline&include_granted_scopes=true&prompt=consent"
@@ -60,8 +61,61 @@
       apply: lambda do |_connection, access_token|
         headers("Authorization" => "Bearer #{access_token}")
       end
-    }
+    },
 
+    base_uri: lambda do |connection|
+      "https://www.googleapis.com"
+    end
+  },
+
+  methods: {
+    event_output: lambda do
+      {
+        "kind": "calendar#event",
+        "etag": "\"3070335133325113\"",
+        "id": "1d5m63ehenusm5f3q95mc3hasd",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?eid=VUW1bTY0ZXB" \
+          "oa6RxcjRmJID5OG1jM3FlaXEgYnJwuxRvbkB3b3JrYXRvLmNvbQ",
+        "created": "2015-05-27T09:30:23.000Z",
+        "updated": "2015-05-25T05:27:33.163Z",
+        "summary": "Chat over coffee",
+        "description": "Cafe near work.",
+        "creator": {
+          "email": "test@test.com",
+          "self": true
+        },
+        "organizer": {
+          "email": "test@test.com",
+          "self": true
+        },
+        "start": {
+          "dateTime": "2015-05-25T13:00:00+05:00"
+        },
+        "end": {
+          "dateTime": "2015-05-25T13:00:00+05:00"
+        },
+        "iCalUID": "1d5m63ehenusm5f3q95mc3hasd@google.com",
+        "sequence": 0,
+        "attendees": [
+          {
+            "email": "test@test.com",
+            "displayName": "Sample User",
+            "organizer": true,
+            "self": true,
+            "responseStatus": "accepted"
+          }
+        ],
+        "extendedProperties": {
+          "private": {
+            "everyoneDeclinedDismissed": "-1"
+          }
+        },
+        "reminders": {
+          "useDefault": true
+        }
+      }
+    end
   },
 
   object_definitions: {
@@ -130,15 +184,16 @@
   },
 
   test: lambda do |_connection|
-    get("https://www.googleapis.com/calendar/v3/users/me/settings?maxResults=1")
+    get("/calendar/v3/users/me/settings?maxResults=1")
   end,
 
-  actions: {
-  },
-
   triggers: {
-    calendar_event_ended: {
-      help: "Continuously checks for updates when possible.",
+    new_past_calendar_event: {
+      description: "New past calendar <span class='provider'>event</span> in " \
+        "<span class='provider'>Google Calendar</span>",
+      help: "Trigger will pick up events that has ended within the specified " \
+        "date range, if provided.",
+
       input_fields: lambda do
         [
           {
@@ -162,31 +217,37 @@
           },
           {
             name: "timeMin",
-            label: "Starting After",
+            label: "Ending after",
             type: "date_time",
             control_type: "date_time",
-            hint: "Fetch events starting on or after this datetime."\
-                  "Defaults to recipe start if not entered.",
-            optional: true
+            hint: "Fetch events ending on or after this datetime. "\
+                  "Defaults to recipe start if not entered."
           }
         ]
       end,
 
       poll: lambda do |_connection, input, next_page|
-        input["timeMin"] = (input["timeMin"] || Time.now).utc.strftime("%FT%TZ")
+        input["timeMin"] = (input["timeMin"] || Time.now).utc.iso8601
 
         page = next_page || nil
 
-        if page.present?
-          response = get("https://www.googleapis.com/calendar/v3/calendars/" \
-                         "#{input['calendarId']}/events?singleEvents=true" \
-                         "&orderBy=startTime&pageToken=#{page}&" \
-                         "timeMin=#{input['timeMin']}")
-        else
-          response = get("https://www.googleapis.com/calendar/v3/calendars/" \
-                         "#{input['calendarId']}/events?singleEvents=true&" \
-                         "orderBy=startTime&timeMin=#{input['timeMin']}")
-        end
+        response =
+          if page.present?
+            get("/calendar/v3/calendars/#{input['calendarId']}/events").
+              params(singleEvents: true,
+                     orderBy: "startTime",
+                     pageToken: page,
+                     maxResults: 50,
+                     timeMin: input["timeMin"],
+                     timeMax: Time.now.utc.iso8601)
+          else
+            get("/calendar/v3/calendars/#{input['calendarId']}/events").
+              params(singleEvents: true,
+                     orderBy: "startTime",
+                     maxResults: 50,
+                     timeMin: input["timeMin"],
+                     timeMax: Time.now.utc.iso8601)
+          end
 
         events = []
 
@@ -197,26 +258,34 @@
             events << event
           end
         end
+
         {
           events: events,
-          next_page: response["nextPageToken"],
+          next_poll: response["nextPageToken"] || nil,
           can_poll_more: response["nextPageToken"].present?
         }
       end,
 
       dedup: lambda do |event|
-        event["id"] + "@" + event["end"]["dateTime"]
+        event["id"] + "@" + event.dig("end", "dateTime")
       end,
 
       output_fields: lambda do |object_definitions|
         object_definitions["event"]
+      end,
+
+      sample_output: lambda do
+        call(:event_output)
       end
     },
 
-    cancelled_event: {
-      help: "Checks for updates every 5 minutes.",
-      description: "Cancelled <span class=\"provider\">event</span> in
-                    <span class=\"provider\">Google Calendar</span>",
+    new_cancelled_event: {
+      description: "New cancelled <span class='provider'>event</span> in " \
+        "<span class='provider'>Google Calendar</span>",
+      help: "Trigger will pick up events that has been cancelled since the " \
+        "specified time, if provided. Last updated date has to be within " \
+        "reasonable range (past 4 weeks)",
+
       input_fields: lambda do
         [
           {
@@ -243,34 +312,37 @@
             label: "Last Updated",
             type: "date_time",
             control_type: "date_time",
-            hint: "Fetch events starting on or after this datetime." \
-                  "Defaults to recipe start if not entered.",
-            optional: true
+            hint: "Fetch events last updated on or after this datetime. " \
+              "Defaults to recipe start if not entered.",
           }
         ]
       end,
 
       poll: lambda do |_connection, input, next_page|
-        input["updatedMin"] = (input["updatedMin"] ||
-        Time.now).utc.strftime("%FT%TZ")
+        input["updatedMin"] = (input["updatedMin"] || Time.now).utc.iso8601
 
         page = next_page || nil
 
-        if page.present?
-          response = get("https://www.googleapis.com/calendar/v3/calendars/" \
-                         "#{input['calendarId']}/events?showDeleted=true" \
-                         "&orderBy=updated&pageToken=#{page}")
-        else
-          response = get("https://www.googleapis.com/calendar/v3/calendars/" \
-                         "#{input['calendarId']}/events?showDeleted=true" \
-                         "&orderBy=updated&timeMin=#{input['updatedMin']}")
-        end
+        response =
+          if page.present?
+            get("/calendar/v3/calendars/#{input['calendarId']}/events").
+              params(showDeleted: true,
+                     orderBy: "updated",
+                     updatedMin: input["updatedMin"],
+                     pageToken: page)
+          else
+            get("/calendar/v3/calendars/#{input['calendarId']}/events").
+              params(showDeleted: true,
+                     orderBy: "updated",
+                     updatedMin: input["updatedMin"])
+          end
 
         events = response["items"].
-                 select { |event| event["status"] == "cancelled" }
+                   select { |event| event["status"] == "cancelled" }
+
         {
           events: events,
-          next_page: response["nextPageToken"] || nil,
+          next_poll: response["nextPageToken"] || nil,
           can_poll_more: response["nextPageToken"].present?
         }
       end,
@@ -281,15 +353,18 @@
 
       output_fields: lambda do |object_definitions|
         object_definitions["event"]
+      end,
+
+      sample_output: lambda do
+        call(:event_output)
       end
     }
   },
 
   pick_lists: {
     calendars: lambda do |_connection|
-      get("https://www.googleapis.com/calendar/v3
-        /users/me/calendarList")["items"].
-        map { |calendar| [calendar["summary"], calendar["id"]] }
+      get("/calendar/v3/users/me/calendarList")["items"].
+        pluck("summary", "id")
     end
   }
 }
