@@ -58,14 +58,14 @@
   },
 
   test: lambda do |connection|
-    get("/rest/v1/applications")
+    get("/rest/v2/applications")
   end,
 
   object_definitions: {
     input_columns: {
       fields: lambda do |_connection, config|
         table = "#{config['table_name']}"
-        columns = get("/rest/v1/tables/#{config['table_name']}/columns").
+        columns = get("/rest/v2/tables/#{config['table_name']}/fields").
         dig("Result")&.
         reject{ |col| ["RANDOM ID", "AUTONUMBER", "PREFIXED AUTONUMBER",
                        "GUID", "TIMESTAMP"].include?(col["Type"]) }.
@@ -133,24 +133,12 @@
               control_type: "date_time",
               label: col["Name"].labelize,
               hint: col["Description"] }
-#           when "RANDOM ID"
-#             { name: col["Name"], type: "string",
-#               control_type: "string", label: col["Name"].labelize,
-#               hint: col["Description"] }
-#           when "AUTONUMBER"
-#             { name: col["Name"], type: "number",
-#               control_type: "number", label: col["Name"].labelize,
-#               hint: col["Description"] }
-#           when "PREFIXED AUTONUMBER"
-#             { name: col["Name"], type: "number",
-#               control_type: "number", label: col["Name"].labelize,
-#               hint: col["Description"] }
-#           when "GUID"
-#             { name: col["Name"], type: "string",
-#               control_type: "string", label: col["Name"].labelize,
-#               hint: col["Description"] }
+          when "AUTONUMBER"
+             { name: col["Name"], type: "number",
+               control_type: "number", label: col["Name"].labelize,
+               hint: col["Description"] }
           when "LIST-STRING"
-            options = get("/rest/v1/tables/" + table + "/columns/" +
+            options = get("/rest/v2/tables/" + table + "/fields/" +
                       col["Name"]).dig("Result","ListOptions").
                       map do |key, val|
               [val.to_s, key.to_s]
@@ -163,7 +151,7 @@
               delimiter: ",",
               hint: col["Description"] }
           when "LIST-NUMBER"
-            options = get("/rest/v1/tables/" + table +"/columns/" +
+            options = get("/rest/v2/tables/" + table +"/fields/" +
                       col["Name"]).dig("Result","ListOptions").
                       map do |key, val|
               [val.to_s, key.to_s]
@@ -176,7 +164,7 @@
               delimiter: ",",
               hint: col["Description"] }
           when "LIST-DATE/TIME"
-            options = get("/rest/v1/tables/" + table +"/columns/" +
+            options = get("/rest/v2/tables/" + table +"/fields/" +
                       col["Name"]).dig("Result","ListOptions").
                       map do |key, val|
               [val.to_s, key.to_s]
@@ -201,7 +189,7 @@
 
     output_columns: {
       fields: lambda do |_connection, config|
-        get("/rest/v1/tables/#{config['table_name']}/columns").
+        columns = get("/rest/v2/tables/#{config['table_name']}/fields").
                   dig("Result").
                   map do |col|
                     case col["Type"]
@@ -300,7 +288,7 @@
                         ],
                         hint: col["Description"] }
                     when "LIST-NUMBER"
-                      col.dig("ListOptions").map do |key, val|
+                      num_list = col.dig("ListOptions").map do |key, val|
                         [key, val.to_s]
                       end
                       { name: col["Name"],
@@ -309,7 +297,7 @@
                         hint: col["Description"],
                         properties: [{ name: col["Name"], type: "integer" }] }
                     when "LIST-DATE/TIME"
-                      col.dig("ListOptions").map do |key, val|
+                      date_list = col.dig("ListOptions").map do |key, val|
                         [key, val]
                       end
                       {
@@ -335,7 +323,8 @@
 
     search_columns: {
       fields: lambda do |_connection, config|
-        get("/rest/v1/tables/#{config['table_name']}/columns").dig("Result").
+        columns = get("/rest/v2/tables/#{config['table_name']}/fields").
+                  dig("Result").
                   select { |c|
                     %w(INTEGER STRING NUMBER GUID).
                       include?(c["Type"])
@@ -379,10 +368,10 @@
   },
 
   actions: {
-    search_records: {
-      subtitle: "Search records",
-      description: "Search <span class='provider'>records</span> " \
-      "in <span class='provider'>Caspio</span>",
+    search_record: {
+      subtitle: "Search Record",
+      description: "Search <span class='provider'>Record</span> " \
+      "In <span class='provider'>CaspioTable</span>",
       config_fields: [
         { name: "table_name", control_type: :select,
           pick_list: :table_list,
@@ -400,7 +389,7 @@
           query_params << key + "='" + val + "'"
         end
         query_string = query_params.smart_join(" or ")
-        query = '{"where":"' + query_string + '"}'
+        query = '{"where" :"' + query_string + '"}'
         {
           records: get("/rest/v1/tables/" + table + "/rows").params(q: query).
             dig("Result")
@@ -413,14 +402,14 @@
         ]
       end,
       sample_output: lambda do |_connection, input|
-        get("/rest/v1/tables/#{input['table_name']}/rows").dig("Result", 0) ||
+        get("/rest/v2/tables/#{input['table_name']}/records").dig("Result", 0) ||
           {}
       end
     },
     create_record: {
-      subtitle: "Create record",
-      description: "Create <span class='provider'>record</span> " \
-      "in <span class='provider'>Caspio table</span>",
+      subtitle: "Create Record",
+      description: "Create <span class='provider'> Record </span> " \
+      "In <span class='provider'>CaspioTable</span>",
       config_fields: [
         { name: "table_name", control_type: :select,
           pick_list: :table_list,
@@ -433,7 +422,7 @@
       end,
       execute: lambda do |_connection, input|
         table = input.delete("table_name")
-        date_fields = get("/rest/v1/tables/" + table + "/columns").
+        date_fields = get("/rest/v2/tables/" + table + "/fields").
                       dig("Result")&.
                       select { |col|
                         col["Name"] if ["DATE/TIME", "TIMESTAMP"].
@@ -447,7 +436,7 @@
             { key => val }
           end
         end.inject(:merge)
-        post("/rest/v1/tables/" + table + "/rows").payload(payload).
+        post("/rest/v2/tables/" + table + "/records").payload(payload).
           dig("Result")
       end,
       output_fields: lambda do
@@ -458,18 +447,21 @@
       end
     },
     update_record: {
-      subtitle: "Update record",
-      description: "Update <span class='provider'>record</span> " \
-      "in <span class='provider'>Caspio table</span>",
+      subtitle: "Update Record",
+      description: "Update <span class='provider'>Record</span> " \
+      "In <span class='provider'>CaspioTable</span>",
       help: "When you update list fields,
              at least one non-list field should be updated.",
       config_fields: [
-        { name: "table_name", control_type: :select,
+        { 
+          name: "table_name", 
+          control_type: :select,
           pick_list: :table_list,
           label: "Table",
           hint: "Select table",
           optional: false },
-        { name: "where",
+        { 
+          name: "where",
           label: "Column Name",
           control_type: "select",
           pick_list: :table_where_clause,
@@ -490,15 +482,16 @@
         table = input.delete("table_name")
         where = input.delete("where")
         value = input.delete("value")
-        query = '{"where":"' + where + "='" + value + "'" + '"}'
-        date_fields = get("/rest/v1/tables/" + table + "/columns").
+        #query = "'" + where + "'='" + value + "'" 
+        query = where + "=" + value 
+        date_fields = get("/rest/v2/tables/" + table + "/fields").
                       dig("Result")&.
                       select { |col|
                         col["Name"] if ["DATE/TIME", "TIMESTAMP"].
                                        include?(col["Type"])
                       }.
                       map { |el| el["Name"] }
-        list_fields = get("/rest/v1/tables/" + table + "/columns").
+        list_fields = get("/rest/v2/tables/" + table + "/fields").
                       dig("Result")&.
                       select { |col|
                         col["Name"] if col["Type"].
@@ -514,9 +507,9 @@
             { key => val }
           end
         end.inject(:merge)
-        put("/rest/v1/tables/" + table + "/rows").
+        put("/rest/v2/tables/" + table + "/records").
           headers("X-HTTP-Method-Override": "PUT").
-          params(q: query).payload(payload).dig("Result")
+          params("q.where": "#{query}").payload(payload)
       end,
       output_fields: lambda do
         [{ name: "RowsAffected", type: "integer" }]
@@ -529,8 +522,8 @@
 
   triggers: {
     new_record: {
-      description: "New <span class='provider'>record</span> in
-                    <span class='provider'>Caspio table</span>",
+      description: "New <span class='provider'>Record</span> In
+                    <span class='provider'>CaspioTable</span>",
       help: "Triggers when a new record has been created.",
       config_fields: [
         { name: "table_name", control_type: :select,
@@ -542,11 +535,11 @@
       poll: lambda do |_connection, input, last_record_id|
         last_record_id ||= 0
         table = input.delete("table_name")
-        columns = get("/rest/v1/tables/" + table + "/columns").dig("Result").
+        columns = get("/rest/v2/tables/" + table + "/fields").dig("Result").
                   pluck("Name").smart_join(",")
         query = '{"select":"PK_ID,' + columns + '","where":"PK_ID>' +
                 last_record_id + '"}'
-        records = get("/rest/v1/tables/" + table + "/rows").params(q: query).
+        records = get("/rest/v2/tables/" + table + "/records").params(q: query).
                   dig("Result")
         last_record_id = records.last["PK_ID"] unless records.blank?
         { events: records,
@@ -562,7 +555,7 @@
         ].concat(object_definitions["output_columns"])
       end,
       sample_output: lambda do |_connection, input|
-        get("/rest/v1/tables/#{input['table_name']}/rows").dig("Result", 0) ||
+        get("/rest/v2/tables/#{input['table_name']}/records").dig("Result", 0) ||
           {}
       end
     }
@@ -570,18 +563,18 @@
 
   pick_lists: {
     table_list: lambda do
-      get("/rest/v1/tables").dig("Result").map do |a|
+      get("/rest/v2/tables").dig("Result").map do |a|
         [a.labelize, a]
       end
     end,
     table_where_clause: lambda do |_connection, table:|
-      get("/rest/v1/tables/" + table + "/columns").dig("Result")&.
+      get("/rest/v2/tables/" + table + "/fields").dig("Result")&.
       select { |col| col unless col["Unique"] == false }.map do |col|
         [col["Name"].labelize, col["Name"]]
       end
     end,
     list_options: lambda do |_connection, table:, column:|
-      get("/rest/v1/tables/" + table + "/columns/" + column).
+      get("/rest/v2/tables/" + table + "/fields/" + column).
         dig("Result", "ListOptions").map do |key, val|
         [val.to_s, key]
       end
