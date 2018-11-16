@@ -288,18 +288,12 @@
                         ],
                         hint: col["Description"] }
                     when "LIST-NUMBER"
-                      num_list = col.dig("ListOptions").map do |key, val|
-                        [key, val.to_s]
-                      end
                       { name: col["Name"],
                         type: "object",
                         label: col["Name"].labelize,
                         hint: col["Description"],
                         properties: [{ name: col["Name"], type: "integer" }] }
                     when "LIST-DATE/TIME"
-                      date_list = col.dig("ListOptions").map do |key, val|
-                        [key, val]
-                      end
                       {
                         name: col["Name"],
                         type: "object",
@@ -544,8 +538,8 @@
         last_record_id = records.last["PK_ID"] unless records.blank?
         { events: records,
           next_poll: last_record_id,
-          can_poll_more: records.present? }
-      end,
+          can_poll_more: records.present? } 
+                end,
       dedup: lambda do |object|
         object["PK_ID"]
       end,
