@@ -165,7 +165,7 @@
               hint: col["Description"] }
           when "LIST-DATE/TIME"
             options = get("/rest/v2/tables/" + table +"/fields/" +
-                      col["Name"]).dig("Result","ListOptions").
+                      col["Name"]).dig("Result", "ListOptions").
                       map do |key, val|
               [val.to_s, key.to_s]
             end
@@ -186,11 +186,9 @@
         end
       end
     },
-
     output_columns: {
       fields: lambda do |_connection, config|
-        columns = get("/rest/v2/tables/#{config['table_name']}/fields").
-                  dig("Result").
+        columns = get("/rest/v2/tables/#{config['table_name']}/fields").dig('Result').
                   map do |col|
                     case col["Type"]
                     when "STRING"
@@ -476,22 +474,22 @@
         table = input.delete("table_name")
         where = input.delete("where")
         value = input.delete("value")
-        #query = "'" + where + "'='" + value + "'" 
-        query = where + "=" + value 
-        date_fields = get("/rest/v2/tables/" + table + "/fields").
-                      dig("Result")&.
+        #query = "'" + where + "'='" + value + "'"
+        query = where + '=' + value
+        date_fields = get("/rest/v2/tables/" + table + "/fields")
+                      .dig("Result")&.
                       select { |col|
-                        col["Name"] if ["DATE/TIME", "TIMESTAMP"].
-                                       include?(col["Type"])
+                        col['Name'] if ['DATE/TIME', 'TIMESTAMP']
+                                       .include?(col['Type'])
                       }.
                       map { |el| el["Name"] }
         list_fields = get("/rest/v2/tables/" + table + "/fields").
                       dig("Result")&.
                       select { |col|
                         col["Name"] if col["Type"].
-                                       starts_with?("LIST")
+                                       starts_with?('LIST')
                       }.
-                      map { |el| el["Name"] }
+                      map { |el| el['Name'] }
         payload = input.map do |key, val|
           if date_fields.include?(key)
             { key => val.to_time.utc.iso8601 }
@@ -529,17 +527,17 @@
       poll: lambda do |_connection, input, last_record_id|
         last_record_id ||= 0
         table = input.delete("table_name")
-        columns = get("/rest/v2/tables/" + table + "/fields").dig("Result").
-                  pluck("Name").smart_join(",")
+        columns = get("/rest/v2/tables/" + table + "/fields").dig("Result")
+                  .pluck("Name").smart_join(",")
         query = '{"select":"PK_ID,' + columns + '","where":"PK_ID>' +
                 last_record_id + '"}'
-        records = get("/rest/v2/tables/" + table + "/records").params(q: query).
-                  dig("Result")
+        records = get("/rest/v2/tables/" + table + "/records").params(q: query)
+                  .dig("Result")
         last_record_id = records.last["PK_ID"] unless records.blank?
         { events: records,
           next_poll: last_record_id,
-          can_poll_more: records.present? } 
-                end,
+          can_poll_more: records.present? }
+              end,
       dedup: lambda do |object|
         object["PK_ID"]
       end,
@@ -549,7 +547,8 @@
         ].concat(object_definitions["output_columns"])
       end,
       sample_output: lambda do |_connection, input|
-        get("/rest/v2/tables/#{input['table_name']}/records").dig("Result", 0) ||
+        get("/rest/v2/tables/#{input['table_name']}/records")
+        .dig("Result", 0) ||
           {}
       end
     }
@@ -568,8 +567,8 @@
       end
     end,
     list_options: lambda do |_connection, table:, column:|
-      get("/rest/v2/tables/" + table + "/fields/" + column).
-        dig("Result", "ListOptions").map do |key, val|
+      get('/rest/v2/tables/' + table + '/fields/' + column)
+        .dig("Result", "ListOptions").map do |key, val|
         [val.to_s, key]
       end
     end
